@@ -1,14 +1,14 @@
 <template>
   <div class="content">
     <div class="header-container">
-      <h1>Registro de Mensajes Personalizados</h1>
+      <h1>Registro de Usuarios</h1>
       <div class="user-info">
         <span>Uroos Fatima</span>
         <img src="https://via.placeholder.com/40" alt="User Image">
       </div>
     </div>
     <div class="header">
-      <h2>Mensajes Personalizados</h2>
+      <h2>Usuarios</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Buscar...">
@@ -19,17 +19,23 @@
         <thead>
           <tr>
             <th><i class="fas fa-calendar-alt"></i> Date</th>
-            <th><i class="fas fa-envelope"></i> Mensajes</th>
-            <th><i class="fas fa-user"></i> Contacto</th>
-            <th><i class="fas fa-info-circle"></i> Estado</th>
+            <th><i class="fas fa-user"></i> Nombres</th>
+            <th><i class="fas fa-id-card-alt"></i> Apellidos</th>
+            <th><i class="fas fa-at"></i> Correo</th>
+            <th><i class="fas fa-phone-alt"></i> Teléfono</th>
+            <th><i class="fas fa-birthday-cake"></i> F.Nacimineto</th>
+            <th><i class="fas fa-circle text-danger"></i> Estado</th>
             <th><i class="fas fa-cogs"></i> Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>12 Jan 2022</td>
-            <td>Perdí completamente la vista</td>
-            <td>0988754236</td>
+            <td>Juan</td>
+            <td>Andrade</td>
+            <td>juandandrade@gmail.com</td>
+            <td>0987475123</td>
+            <td>14-04-2002</td>
             <td class="status">Activo</td>
             <td class="actions">
               <i class="fas fa-plus-circle"></i>
@@ -104,7 +110,7 @@
     }
 
     th, td {
-      padding: 15px;
+      padding: 12px;
       text-align: left;
     }
 

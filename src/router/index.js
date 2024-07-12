@@ -25,6 +25,11 @@ import EstacionMetroNew from "@/views/estacionMetro/EstacionMetroNew.vue";
 import EstacionMetroEdit from "@/views/estacionMetro/EstacionMetroEdit.vue";
 import EstacionMetroView from "@/views/estacionMetro/EstacionMetroView.vue";
 
+//Import USER
+import UserNew from "@/views/user/UserNew";
+import UserEdit from "@/views/user/UserEdit";
+import UserView from "@/views/user/UserView";
+
 const routes = [
   {
     path: "/",
@@ -116,6 +121,22 @@ const routes = [
     name: "viewEstacionMetro",
     component: EstacionMetroView,
   },
+  //Route USER
+  {
+    path: "/create/User",
+    name: "createUser",
+    component: UserNew
+  },
+  {
+    path: "/edit/User/:id",
+    name: "editUser",
+    component: UserEdit
+  },
+  {
+    path: "/view/User",
+    name: "viewUser",
+    component: UserView
+  }
 ];
 
 const router = createRouter({
