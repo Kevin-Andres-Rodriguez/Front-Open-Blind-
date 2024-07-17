@@ -36,9 +36,9 @@
               <input id="date" type="date" placeholder="date" required v-model="form.date">
             </div>
        
-          <button type="submit">Registrar</button>
-          <router-link to="/register" class="register-link">
-          <i></i> <span class="register-button">Regístrate</span>
+            <router-link to="/dashboard" class="custom-btn active">Registrate</router-link>
+          <router-link to="/" class="register-link">
+          <i></i> <span class="register-button">Iniciar Sesión</span>
         </router-link>
         </form>
       </div>
@@ -50,10 +50,10 @@
     data() {
       return {
         form: {
-          nombre: '',
-          apellidos: '',
-          email: '',
-          password: '',
+          nombre: 'Fatima',
+          apellidos: 'Uroos',
+          email: 'urus.dising@gmail.com',
+          password: '12345',
           telefono: '',
           fecha_nacimiento: '',
           estado: ''
@@ -69,6 +69,22 @@
   </script>
   
   <style scoped>
+
+
+/* Estilos CSS del boton */
+.custom-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #034494;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
   body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -145,17 +161,7 @@
   color: red;
 }
   
-  button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #034494;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-  font-weight: bold;
-  }
+
 
   .register-link {
   text-align: center; 
