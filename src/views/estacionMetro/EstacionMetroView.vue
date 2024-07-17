@@ -1,11 +1,82 @@
 <template>
   <Navegation />
-<div>
-  <Nav />
-  <h1>Estación de Metro - View</h1>
-  <!-- Aquí puedes agregar el resto del contenido de tu vista -->
-</div>
-
+  <div class="container">
+    <Nav />
+    <div class="header">
+      <h2>Estanción de Metro</h2>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar...">
+      </div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th><i class="fas fa-calendar-alt"></i> Date</th>
+            <th><i class="fas fa-subway"></i> Nombre de la estación</th>
+            <th><i class="fas fa-align-left"></i> Descripción</th>
+            <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
+            <th><i class="fas fa-circle text-danger"></i> Estado</th>
+            <th><i class="fas fa-cogs"></i> Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>12 Jan 2022</td>
+            <td>Juan</td>
+            <td>Sur de Quito</td>
+            <td>Av. Cóndor Ñan y Av. Mariscal Sucre  </td>
+            <td class="status">Activo</td>
+            <td class="actions">
+              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <p>8 results found: Showing page 1 of 100</p>
+        <button>Previous</button>
+        <button class="active">1</button>
+        <button>2</button>
+        <button>Next</button>
+      </div>
+    </div>
+    <div :class="['off-canvas', { open: isOffCanvasOpen }]">
+      <div class="off-canvas-header">
+        <h2>{{ offCanvasTitle }}</h2>
+        <button @click="closeOffCanvas" class="close-btn">&times;</button>
+      </div>
+      <div class="off-canvas-body">
+        <form @submit.prevent="submitForm" class="form">
+          <div class="form-group">
+            <label for="nombre_estacion" class="form-label">Nombre de la estación <span class="required">*</span>:</label>
+            <input type="text" id="nombre_estacion" v-model="form.nombre_estacion" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="descripcion_estacion" class="form-label">Descripción <span class="required">*</span>:</label>
+            <input type="text" id="descripcion_estacion" v-model="form.descripcion_estacion" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="ubicacion_estacion" class="form-label">Ubicación <span class="required">*</span>:</label>
+            <input type="email" id="ubicacion_estacion" v-model="form.ubicacion_estacion" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
+            <label class="switch">
+              <input type="checkbox" v-model="form.estado_usuario">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          <div class="form-group-button">
+            <button type="submit" class="btn">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -13,12 +84,367 @@ import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 
 export default {
-name: 'EstacionMetroView',
-components: {
-  Navegation,
-  Nav
-
-}
-}
+  name: 'EstacionMetroView',
+  components: {
+    Navegation,
+    Nav
+  },
+  data() {
+    return {
+      isOpen: false,
+      username: 'Fatima',
+      userImage: 'https://via.placeholder.com/40',
+      form: {
+        nombre_estacion: '',
+        descripcion_estacion: '',
+        ubicacion_estacion: '',
+        estado_estacion: false
+      },
+      isOffCanvasOpen: false,
+      offCanvasTitle: ''
+    };
+  },
+  methods: {
+    openOffCanvas(action) {
+      this.offCanvasTitle = action === 'add' ? 'Agregar Estación' : 'Editar Estación';
+      this.isOffCanvasOpen = true;
+    },
+    closeOffCanvas() {
+      this.isOffCanvasOpen = false;
+    },
+    redirectToForm() {
+      this.$router.push('/create/EstacionMetro');
+    },
+    handleDeleteClick() {
+      alert('Botón de eliminar clickeado');
+    },
+    toggleDropdown() {
+      this.isOpen = !this.isOpen;
+    },
+    submitForm() {
+      alert(`
+        Nombre: ${this.form.nombre_estacion}
+        Descripcion: ${this.form.descripcion_estacion}
+        Ubicación: ${this.form.ubicacion_estacion}
+        Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
+      `);
+      this.closeOffCanvas();
+    }
+  }
+};
 </script>
 
+<style scoped>
+.container {
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 1950px;
+  width: 90%;
+  text-align: center; /* Centrando el contenido horizontalmente */
+}
+
+.header {
+  background-color: #e0e4e8;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  text-align: center; /* Centrando el contenido horizontalmente */
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.search-box {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Alinea la caja de búsqueda a la derecha */
+}
+
+.search-box input {
+  border: none;
+  outline: none;
+  margin-left: 5px;
+}
+
+.table-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  background-color: #f0f2f5;
+  color: #333;
+  font-weight: bold;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+  width: 12.5%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 12.5%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 12.5%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 12.5%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 12.5%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 12.5%;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+  width: 12.5%;
+}
+
+th:nth-child(8),
+td:nth-child(8) {
+  width: 12.5%;
+}
+
+tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
+}
+
+.actions i {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.actions i:hover {
+  color: #007bff;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center; /* Centrando la paginación horizontalmente */
+  padding: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  background-color: #e0e4e8;
+  border: none;
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination p {
+  margin: 0;
+  margin-right: auto;
+  color: #666;
+}
+
+.status {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Off-Canvas Styles */
+
+.off-canvas {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+
+.off-canvas.open {
+  right: 0;
+}
+
+.off-canvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px;
+  background-color: #007bff;
+  color: #fff;
+}
+
+.off-canvas-body {
+  padding: 10px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-group {
+  flex: 1 1 100%; /* Asegura que los campos del formulario ocupen el ancho completo */
+  margin: 10px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #007bff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+.form-group-button {
+  text-align: center;
+  width: 100%;
+}
+
+.btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+</style>

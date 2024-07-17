@@ -127,7 +127,7 @@ export default {
       this.isOffCanvasOpen = false;
     },
     redirectToForm() {
-      this.$router.push('/create/EstacionMetro');
+      this.$router.push('/register');
     },
     handleDeleteClick() {
       alert('Botón de eliminar clickeado');
