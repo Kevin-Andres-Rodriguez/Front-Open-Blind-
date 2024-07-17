@@ -12,7 +12,7 @@
               <input type="email" placeholder="Email Address" required v-model="email">
               <input type="password" placeholder="Password" required v-model="password">
 
-              <router-link to="/dashboard" class="custom-btn active">Iniciar Sesión</router-link>
+              <button  type="submit">Iniciar Sesión</button>
 
             
               <div class="register-link">
@@ -39,7 +39,7 @@ export default {
           // Aquí podrías agregar lógica para validar y autenticar el usuario
           // Simulando una redirección a '/home' después de autenticar
           console.log('Usuario autenticado:', this.email);
-          this.$router.push('/home');
+          this.$router.push('/');
       }
   }
 }
@@ -53,19 +53,16 @@ export default {
 <style scoped>
 
 /* Estilos CSS del boton */
-.custom-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #034494;
+button {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
   border: none;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
+  border-radius: 4px;
+  cursor: pointer;
 }
+
 
 
 body {
