@@ -7,12 +7,12 @@
       <nav>
         <ul>
           <li>
-            <router-link to="/" class="active">
+            <router-link to="/dashboard" class="active">
               <i class="fas fa-tachometer-alt"></i> Dashboard
             </router-link>
           </li>
           <li>
-            <router-link to="/edit/User/:id" class="active">
+            <router-link to="/create/User" class="active">
               <i class="fas fa-user"></i> Usuario
             </router-link>
           </li>
@@ -42,7 +42,7 @@
             </router-link>
           </li>
           <li class="submenu">
-            <router-link to="/">
+            <router-link to="/dashboard">
               <i class="fas fa-history"></i> Historial
             </router-link>
             <ul>

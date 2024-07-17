@@ -30,6 +30,12 @@ import UserNew from "@/views/user/UserNew";
 import UserEdit from "@/views/user/UserEdit";
 import UserView from "@/views/user/UserView";
 
+//Import DASHBOARD
+import Dashboard from "@/views/dashboard/Dashboard.vue";
+
+//Import REGISTRO
+import Register from "@/views/register.vue";
+
 const routes = [
   {
     path: "/",
@@ -109,7 +115,7 @@ const routes = [
   {
     path: "/create/EstacionMetro",
     name: "createEstacionMetro",
-    component: EstacionMetroNew
+    component: EstacionMetroNew,
   },
   {
     path: "/edit/EstacionMetro/:id",
@@ -125,18 +131,30 @@ const routes = [
   {
     path: "/create/User",
     name: "createUser",
-    component: UserNew
+    component: UserNew,
   },
   {
     path: "/edit/User/:id",
     name: "editUser",
-    component: UserEdit
+    component: UserEdit,
   },
   {
     path: "/view/User",
     name: "viewUser",
-    component: UserView
-  }
+    component: UserView,
+  },
+  //Route DASHBOARD
+  {
+    path: "/dashboard",
+    name: "dashboard",
+    component: Dashboard,
+  },
+  //Route REGISTRO
+  {
+    path: "/register",
+    name: "register",
+    component: Register
+  },
 ];
 
 const router = createRouter({

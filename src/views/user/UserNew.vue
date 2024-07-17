@@ -1,148 +1,166 @@
 <template>
-  <div class="container">
-      <div class="image-section">
-          <img src="@/img/inicio.jpg" alt="Persona con bastón y acompañante">
-      </div>
-      <div class="login-section">
-          <div class="logo">
-              <h1>Open<span class="blind">Blind</span></h1>
-              <p>Navegando con Confianza, Alcanzando Libertad</p>
-          </div>
-          <form @submit.prevent="login">
-              <input type="email" placeholder="Email Address" required v-model="email">
-              <input type="password" placeholder="Password" required v-model="password">
-              <button type="submit">Iniciar Sesión</button>
-              <div class="register-link">
-                  <p>¿Eres nuevo usuario?</p>
-                  <a href="#">Registrarse</a>
-              </div>
-          </form>
-      </div>
-  </div>
-</template>
-
-<script>
-export default {
-  data() {
-      return {
-          email: '',
-          password: ''
-      };
-  },
-  methods: {
-      login() {
-          // Aquí podrías agregar lógica para validar y autenticar el usuario
-          // Simulando una redirección a '/home' después de autenticar
-          console.log('Usuario autenticado:', this.email);
-          this.$router.push('/home');
-      }
-  }
-}
-</script>
-
-<style scoped>
-/* Estilos CSS específicos para este componente */
-</style>
-
-
-<style scoped>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f7f7f7;
-}
-
-.container {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-}
-
-.image-section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-
-.image-section img {
-    max-width: 130%;
-    max-height: 100%;
-}
-
-.login-section {
-    flex: 1;
-
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-right: -20%;
-}
-
-.logo {
-    text-align: center;
-    margin-right: -20%;
-}
-
-.logo h1 {
-    font-size: 4em;
-
-}
-
-.logo .blind {
-    color: #d6d6d6;
-    font-size: 0.75em
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 300px;
-    margin-right: -20%;
-}
-
-input {
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 9px;
-    background-color: #dadada;
-}
-
-button {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.register-link {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.register-link a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.register-link a:hover {
-    text-decoration: underline;
-}
-
-
-
-</style>
+    <Navegation />
+   <div class="content">
+     <Nav />
+ 
+       <div class="profile">
+         <h2>Administrador Información</h2>
+         <div class="profile-info">
+           <div class="profile-picture">
+             <img src="https://via.placeholder.com/100" alt="Profile Picture" />
+           </div>
+           <div class="profile-details">
+             <p>Uroos Fatima</p>
+             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry...</p>
+             <p>Email: uroos.desing@gmail.com</p>
+             <p>Phone Number: +91 654852524</p>
+             <p>Address: Quito, 12 de diciembre y roca</p>
+           </div>
+         </div>
+         <div class="additional-info">
+           <div class="info-item">
+             <span>Nombre</span>
+             <p>Fatima</p>
+           </div>
+           <div class="info-item">
+             <span>Apellido</span>
+             <p>Uroos</p>
+           </div>
+           <div class="info-item">
+             <span>Teléfono</span>
+             <p>0988595952</p>
+           </div>
+           <div class="info-item">
+             <span>Email</span>
+             <p>uroos.desing@gmail.com</p>
+           </div>
+           <div class="info-item">
+             <span>Estado</span>
+             <p>Activo</p>
+           </div>
+           <div class="info-item">
+             <span>F. Nacimiento</span>
+             <p>1999-05-26</p>
+           </div>
+         </div>
+       </div>
+     </div>
+   </template>
+   
+   <script>
+   import Nav from '@/components/Nav.vue';
+ import Navegation from '@/components/Navegation.vue';
+ 
+   export default {
+     name: 'UserEdit',
+     components: {
+       Navegation,
+       Nav
+     },
+     data() {
+       return {
+         isOpen: false,
+         username: 'Fatima',
+         userImage: 'https://via.placeholder.com/40',
+       };
+     },
+     methods: {
+       toggleDropdown() {
+         this.isOpen = !this.isOpen;
+       },
+     },
+   };
+ </script>
+ 
+ 
+ <style scoped>
+   
+ .content {
+ margin-left: 20px;
+ padding: 15px;
+ width: calc(100% - 220px);
+ }
+ 
+ 
+ 
+ .profile {
+   background-color: #fff;
+   padding: 20px;
+   border-radius: 10px;
+   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   width: 100%;
+   max-width: 1100px;
+   text-align: center;
+ }
+ 
+ .profile h2 {
+   margin-bottom: 20px;
+   font-size: 22px;
+ }
+ 
+ .profile-info {
+   display: flex;
+   justify-content: center;
+   margin-bottom: 20px;
+ }
+ 
+ .profile-picture img {
+   border-radius: 50%;
+   width: 100px;
+   height: 100px;
+   object-fit: cover;
+   margin-right: 20px;
+ }
+ 
+ .profile-details p {
+   margin: 5px 0;
+   font-size: 16px;
+   line-height: 1.5;
+ }
+ 
+ .additional-info {
+   display: grid;
+   grid-template-columns: repeat(3, 1fr);
+   gap: 20px;
+ }
+ 
+ .info-item {
+   background-color: #f8f8f8;
+   padding: 20px;
+   border-radius: 10px;
+   text-align: center;
+ }
+ 
+ .info-item span {
+   display: block;
+   margin-bottom: 10px;
+   font-weight: bold;
+   color: #fff;
+   padding: 5px;
+   border-radius: 5px;
+ }
+ 
+ .info-item:nth-child(1) span {
+   background-color: #ff9800;
+ }
+ 
+ .info-item:nth-child(2) span {
+   background-color: #ff9800;
+ }
+ 
+ .info-item:nth-child(3) span {
+   background-color: #4caf50;
+ }
+ 
+ .info-item:nth-child(4) span {
+   background-color: #4caf50;
+ }
+ 
+ .info-item:nth-child(5) span {
+   background-color: #f44336;
+ }
+ 
+ .info-item:nth-child(6) span {
+   background-color: #e91e63;
+ }
+ </style>

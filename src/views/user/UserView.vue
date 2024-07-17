@@ -98,29 +98,55 @@ import Navegation from '@/components/Navegation.vue';
 
 export default {
   name: 'UserView',
-  components: {
-    Navegation,
-    Nav
-  },
+components: {
+Navegation,
+Nav
+},
   data() {
     return {
+      isOpen: false,
+        username: 'Fatima',
+        userImage: 'https://via.placeholder.com/40',
       form: {
-        date: '',
-        routeName: '',
-        description: '',
-        location: '',
-        status: false
-      }
+        nombre_estacion: '',
+        descripcion_estacion: '',
+        ubicacion_estacion: '',
+        estado_estacion: false
+      },
+      isOffCanvasOpen: false,
+      offCanvasTitle: ''
     };
   },
   methods: {
+    openOffCanvas(action) {
+      this.offCanvasTitle = action === 'add' ? 'Agregar Estación' : 'Editar Estación';
+      this.isOffCanvasOpen = true;
+    },
+    closeOffCanvas() {
+      this.isOffCanvasOpen = false;
+    },
+    redirectToForm() {
+      this.$router.push('/create/EstacionMetro');
+    },
+    handleDeleteClick() {
+      alert('Botón de eliminar clickeado');
+    },
+    toggleDropdown() {
+        this.isOpen = !this.isOpen;
+      },
     submitForm() {
-      console.log(this.form);
-      // Aquí podrías agregar la lógica para enviar el formulario
+      alert(`
+        Nombre de la Estación: ${this.form.nombre_estacion}
+        Descripción: ${this.form.descripcion_estacion}
+        Ubicación: ${this.form.ubicacion_estacion}
+        Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
+      `);
+      this.closeOffCanvas();
     }
   }
 };
 </script>
+
 
 <style scoped>
 .container {
@@ -268,6 +294,11 @@ tr:hover {
   display: block;
 }
 
+
+
+/* Off-Canvas Styles */
+
+
 .off-canvas {
   position: fixed;
   top: 0;
@@ -392,44 +423,7 @@ input:checked + .slider:before {
   background-color: #0056b3;
 }
 
-@media (max-width: 768px) {
-  .header-container,
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
-  .header-container h1,
-  .header h2 {
-    margin-bottom: 10px;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-
-  .table-container {
-    overflow-x: auto;
-  }
-
-  th,
-  td {
-    white-space: nowrap;
-  }
-
-  .form {
-    flex-direction: column;
-  }
-
-  .form-group {
-    flex: 1 1 100%;
-    margin: 10px 0;
-  }
-
-  .pagination {
-    justify-content: center;
-  }
-}
 
 
 </style>

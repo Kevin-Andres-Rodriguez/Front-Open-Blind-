@@ -9,9 +9,7 @@
           <img :src="userImage" alt="User Image">
         </div>
         <div v-if="isOpen" class="dropdown-content">
-          <router-link to="/">Login</router-link>
-          <router-link to="/create/User" @click="closeDropdown">Registro</router-link>
-          <router-link to="/view/Admin">Usuario Administrador</router-link>
+          <router-link to="/create/User">Usuario</router-link>
           <router-link to="/">Logout</router-link>
         </div>
       </div>
