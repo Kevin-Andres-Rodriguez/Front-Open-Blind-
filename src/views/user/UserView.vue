@@ -1,5 +1,5 @@
 <template>
-    <Navegation />
+  <Navegation />
   <div class="container">
     <Nav />
     <div class="header">
@@ -89,7 +89,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -98,20 +97,22 @@ import Navegation from '@/components/Navegation.vue';
 
 export default {
   name: 'UserView',
-components: {
-Navegation,
-Nav
-},
+  components: {
+    Navegation,
+    Nav
+  },
   data() {
     return {
       isOpen: false,
-        username: 'Fatima',
-        userImage: 'https://via.placeholder.com/40',
+      username: 'Fatima',
+      userImage: 'https://via.placeholder.com/40',
       form: {
-        nombre_estacion: '',
-        descripcion_estacion: '',
-        ubicacion_estacion: '',
-        estado_estacion: false
+        nombre_usuario: '',
+        apellido_usuario: '',
+        correo_usuario: '',
+        telefono_usuario: '',
+        fecha_nacimiento_usuario: '',
+        estado_usuario: false
       },
       isOffCanvasOpen: false,
       offCanvasTitle: ''
@@ -119,7 +120,7 @@ Nav
   },
   methods: {
     openOffCanvas(action) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Estación' : 'Editar Estación';
+      this.offCanvasTitle = action === 'add' ? 'Agregar Usuario' : 'Editar Usuario';
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -132,14 +133,16 @@ Nav
       alert('Botón de eliminar clickeado');
     },
     toggleDropdown() {
-        this.isOpen = !this.isOpen;
-      },
+      this.isOpen = !this.isOpen;
+    },
     submitForm() {
       alert(`
-        Nombre de la Estación: ${this.form.nombre_estacion}
-        Descripción: ${this.form.descripcion_estacion}
-        Ubicación: ${this.form.ubicacion_estacion}
-        Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
+        Nombres: ${this.form.nombre_usuario}
+        Apellidos: ${this.form.apellido_usuario}
+        Email: ${this.form.correo_usuario}
+        Teléfono: ${this.form.telefono_usuario}
+        Fecha de Nacimiento: ${this.form.fecha_nacimiento_usuario}
+        Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
       `);
       this.closeOffCanvas();
     }
@@ -147,15 +150,14 @@ Nav
 };
 </script>
 
-
 <style scoped>
 .container {
   margin: 0 auto;
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1950px;
   width: 90%;
+  text-align: center; /* Centrando el contenido horizontalmente */
 }
-
 
 .header {
   background-color: #e0e4e8;
@@ -167,6 +169,7 @@ Nav
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
+  text-align: center; /* Centrando el contenido horizontalmente */
 }
 
 .header h2 {
@@ -181,6 +184,7 @@ Nav
   border-radius: 5px;
   display: flex;
   align-items: center;
+  margin-left: auto; /* Alinea la caja de búsqueda a la derecha */
 }
 
 .search-box input {
@@ -217,6 +221,46 @@ th {
   font-weight: bold;
 }
 
+th:nth-child(1),
+td:nth-child(1) {
+  width: 12.5%;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+  width: 12.5%;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+  width: 12.5%;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 12.5%;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+  width: 12.5%;
+}
+
+th:nth-child(6),
+td:nth-child(6) {
+  width: 12.5%;
+}
+
+th:nth-child(7),
+td:nth-child(7) {
+  width: 12.5%;
+}
+
+th:nth-child(8),
+td:nth-child(8) {
+  width: 12.5%;
+}
+
 tr:nth-child(even) {
   background-color: #f9fafb;
 }
@@ -236,7 +280,7 @@ tr:hover {
 
 .pagination {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center; /* Centrando la paginación horizontalmente */
   padding: 20px;
   align-items: center;
   flex-wrap: wrap;
@@ -294,10 +338,7 @@ tr:hover {
   display: block;
 }
 
-
-
 /* Off-Canvas Styles */
-
 
 .off-canvas {
   position: fixed;
@@ -320,13 +361,13 @@ tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 2px;
   background-color: #007bff;
   color: #fff;
 }
 
 .off-canvas-body {
-  padding: 20px;
+  padding: 10px;
 }
 
 .close-btn {
@@ -343,7 +384,7 @@ tr:hover {
 }
 
 .form-group {
-  flex: 1 1 45%;
+  flex: 1 1 100%; /* Asegura que los campos del formulario ocupen el ancho completo */
   margin: 10px;
 }
 
@@ -422,8 +463,4 @@ input:checked + .slider:before {
 .btn:hover {
   background-color: #0056b3;
 }
-
-
-
-
 </style>
