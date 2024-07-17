@@ -1,11 +1,37 @@
 <template>
   <Navegation />
-<div>
-  <Nav />
-  <h1>Ruta - New</h1>
-  <!-- Aquí puedes agregar el resto del contenido de tu vista -->
-</div>
-
+  <div class="content">
+    <Nav />
+    <div class="form-container">
+      <br>
+      <div class="titulo"><h1>Crear Nueva Ruta</h1></div>
+      <br>
+      <form @submit.prevent="submitForm" class="form">        
+        <div class="form-group">
+          <label for="nombre_ruta" class="form-label">Nombre de la ruta <span class="required">*</span>:</label>
+          <input type="text" id="nombre_ruta" v-model="form.nombre_ruta" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="descripcion_ruta" class="form-label">Descripción <span class="required">*</span>:</label>
+          <textarea id="descripcion_ruta" v-model="form.descripcion_ruta" class="form-control" rows="2" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="ubicacion_ruta" class="form-label">Ubicación <span class="required">*</span>:</label>
+          <input type="text" id="ubicacion_ruta" v-model="form.ubicacion_ruta" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label for="estado_ruta" class="form-label">Estado <span class="required">*</span>:</label>
+          <label class="switch">
+            <input type="checkbox" v-model="form.estado_ruta">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div class="form-group-button">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -13,12 +39,213 @@ import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 
 export default {
-name: 'RutaNew',
-components: {
-  Navegation,
-  Nav
-
-}
-}
+  name: 'RutaNew',
+  components: {
+    Navegation,
+    Nav
+  },
+  data() {
+    return {
+      isOpen: false,
+      username: 'Fatima',
+      userImage: 'https://via.placeholder.com/40',
+      form: {
+        nombre_ruta: '',
+        descripcion_ruta: '',
+        ubicacion_ruta: '',        
+        estado_ruta: false
+      }
+    };
+  },
+  methods: {
+    submitForm() {
+      console.log(this.form);
+    },
+    toggleDropdown() {
+      this.isOpen = !this.isOpen;
+    },
+    closeDropdown() {
+      this.isOpen = false;
+    }
+  }
+};
 </script>
 
+<style scoped>
+.content {
+  margin-left: 20px;
+  padding: 15px;
+  width: calc(100% - 220px); 
+}
+.titulo{
+  text-align: center;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info span {
+  margin-right: 10px;
+}
+
+.user-info img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  padding: 12px 16px;
+  text-decoration: none;
+  color: black;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+.form-container {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: #343a40;
+}
+
+.form-label .required {
+  color: red;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control:hover {
+  border-color: #80bdff;
+}
+
+.form-control::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+.form-group-button {
+  display: flex;
+  justify-content: center; 
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #007bff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter, .slide-leave-to {
+  transform: translateX(100%);
+}
+</style>

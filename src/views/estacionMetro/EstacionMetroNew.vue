@@ -4,7 +4,11 @@
   <div class="content">
     <Nav />
     <div class="form-container">
+
       <form @submit.prevent="submitForm" class="form">
+        <br>
+        <div class="titulo"><h1>Crear Nueva Estación de Metro</h1></div>
+        <br>
         <div class="form-group">
           <label for="nombre_usuario" class="form-label">Nombres <span class="required">*</span>:</label>
           <input type="text" id="nombre_usuario" v-model="form.nombre_usuario" class="form-control" required>
@@ -97,6 +101,9 @@ import Navegation from '@/components/Navegation.vue';
 
 .form-group {
   margin-bottom: 15px;
+}
+.titulo{
+  text-align: center;
 }
 
 .form-label {
