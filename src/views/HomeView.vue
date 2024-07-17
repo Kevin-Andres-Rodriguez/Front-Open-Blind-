@@ -16,8 +16,10 @@
 
             
               <div class="register-link">
-                  <p>¿Eres nuevo usuario?</p>
-                  <a href="#">Registrarse</a>
+                <p>¿Eres nuevo usuario?</p>
+                <router-link to="/register">
+                   <i ></i> Registrate
+                </router-link>
               </div>
           </form>
       </div>
