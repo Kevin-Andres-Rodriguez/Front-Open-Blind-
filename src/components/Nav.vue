@@ -56,6 +56,7 @@ export default {
   margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 77vw; /* Ajuste para que ocupe todo el ancho de la ventana */
+  right: 10px;
 }
 
 .header-container h1 {
