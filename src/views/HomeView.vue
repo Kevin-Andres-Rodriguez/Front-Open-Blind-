@@ -68,8 +68,6 @@ export default {
 }
 
 
-
-
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -99,7 +97,6 @@ body {
 
 .login-section {
     flex: 1;
-
     padding: 40px;
     display: flex;
     flex-direction: column;
@@ -153,7 +150,5 @@ input {
 .register-link a:hover {
     text-decoration: underline;
 }
-
-
 
 </style>
