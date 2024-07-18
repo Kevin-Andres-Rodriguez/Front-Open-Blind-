@@ -39,7 +39,7 @@ export default {
           // Aquí podrías agregar lógica para validar y autenticar el usuario
           // Simulando una redirección a '/home' después de autenticar
           console.log('Usuario autenticado:', this.email);
-          this.$router.push('/');
+          this.$router.push('/dashboard');
       }
   }
 }
