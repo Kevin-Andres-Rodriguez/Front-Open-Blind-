@@ -1,12 +1,11 @@
 <template>
-
   <div class="content">
     <div class="header-container">
       <h1>OpenBlind</h1>
       <div class="dropdown" @click="toggleDropdown">
         <div class="user-info">
           <span>{{ username }}</span>
-          <img :src="userImage" alt="User Image">
+          <img :src="userImage" alt="User Image" class="user-image">
         </div>
         <div v-if="isOpen" class="dropdown-content">
           <router-link to="/create/User">Usuario</router-link>
@@ -23,7 +22,7 @@ export default {
     return {
       isOpen: false,
       username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
+      userImage: 'https://cdn-icons-png.flaticon.com/128/4202/4202850.png',
     };
   },
   methods: {
@@ -55,7 +54,7 @@ export default {
   border-radius: 10px;
   margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 77vw; /* Ajuste para que ocupe todo el ancho de la ventana */
+  width: 77vw; 
   right: 10px;
 }
 
@@ -72,6 +71,12 @@ export default {
 
 .user-info span {
   margin-right: 10px;
+}
+
+.user-image {
+  width: 50px; 
+  height: 50px; 
+  border-radius: 50%; 
 }
 
 .dropdown-content {

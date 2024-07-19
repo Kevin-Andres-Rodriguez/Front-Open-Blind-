@@ -6,7 +6,7 @@
       <h2>Punto de Interes</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar...">
+        <input type="text" placeholder="Buscar por nombre..." v-model="searchQuery">
       </div>
     </div>
     <div class="table-container">
@@ -22,22 +22,22 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>12 Jan 2022</td>
-            <td>Taquillera 1 El recreo</td>
-            <td>Pago Boleteria</td>
-            <td>Sur de Quito</td>
-            <td class="status">Activo</td>
+          <tr v-for="punto in filteredPuntos" :key="punto.id">
+            <td>{{ punto.fecha }}</td>
+            <td>{{ punto.nombres }}</td>
+            <td>{{ punto.descripcion }}</td>
+            <td>{{ punto.ubicacion }}</td>
+            <td class="status">{{ punto.estado_usuario }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
-              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit', punto)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>8 results found: Showing page 1 of 100</p>
+        <p>{{ filteredPuntos.length }} resultados encontrados: Mostrando página 1 de 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -96,7 +96,7 @@ export default {
   },
   data() {
     return {
-      isOpen: false,
+      searchQuery: '',
       form: {
         fecha: '',
         nombres: '',
@@ -104,13 +104,29 @@ export default {
         ubicacion: '',
         estado_usuario: false
       },
+      puntos: [
+        { id: 1, fecha: '12 Jan 2022', nombres: 'Taquillera 1 El recreo', descripcion: 'Pago Boleteria', ubicacion: 'Sur de Quito', estado_usuario: 'Activo' },
+        { id: 2, fecha: '15 Feb 2022', nombres: 'Taquillera 2 El recreo', descripcion: 'Venta de tickets', ubicacion: 'Norte de Quito', estado_usuario: 'Inactivo' },
+        // Añade más puntos de interés aquí según sea necesario
+      ],
       isOffCanvasOpen: false,
       offCanvasTitle: ''
     };
   },
+  computed: {
+    filteredPuntos() {
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.puntos.filter(punto => 
+        punto.nombres.toLowerCase().includes(query)
+      );
+    }
+  },
   methods: {
-    openOffCanvas(action) {
+    openOffCanvas(action, punto) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Punto de Interes' : 'Editar Punto de Interes';
+      if (action === 'edit') {
+        this.form = { ...punto };
+      }
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -119,7 +135,7 @@ export default {
     redirectToForm() {
       this.$router.push('/create/PuntoInteres');
     },
-    handleDeleteClick() {
+    handleDeleteClick(id) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -130,6 +146,7 @@ export default {
         confirmButtonText: 'Sí, bórralo!'
       }).then((result) => {
         if (result.isConfirmed) {
+          this.puntos = this.puntos.filter(punto => punto.id !== id);
           Swal.fire(
             '¡Borrado!',
             'El punto de interés ha sido borrado.',
@@ -137,9 +154,6 @@ export default {
           )
         }
       })
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
     },
     submitForm() {
       Swal.fire({
@@ -160,4 +174,3 @@ export default {
 </script>
 
 <style scoped src="@/assets/styles/puntoInteres/puntoInteresView.css"></style>
-

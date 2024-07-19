@@ -6,7 +6,7 @@
       <h2>Rutas</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar...">
+        <input type="text" placeholder="Buscar por nombre..." v-model="searchQuery">
       </div>
     </div>
     <div class="table-container">
@@ -16,28 +16,28 @@
             <th><i class="fas fa-calendar-alt"></i> Date</th>
             <th><i class="fas fa-subway"></i> Nombre de la ruta</th>
             <th><i class="fas fa-align-left"></i> Descripción</th>
-            <th><i class="fas fa-map-marker-alt"></i>Ubicación </th>
+            <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
             <th><i class="fas fa-circle text-danger"></i> Estado</th>
             <th><i class="fas fa-cogs"></i> Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>12 Jan 2022</td>
-            <td>Entrada Estación Quitumbe </td>
-            <td>15 gradas hacia abajo</td>
-            <td>Terminal Quitumbe</td>
-            <td class="status">Activo</td>
+          <tr v-for="ruta in filteredRutas" :key="ruta.id">
+            <td>{{ ruta.date }}</td>
+            <td>{{ ruta.nombre_ruta }}</td>
+            <td>{{ ruta.descripcion_ruta }}</td>
+            <td>{{ ruta.ubicacion_ruta }}</td>
+            <td class="status">{{ ruta.estado_ruta }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
-              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit', ruta)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(ruta.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>8 results found: Showing page 1 of 100</p>
+        <p>{{ filteredRutas.length }} resultados encontrados: Mostrando página 1 de 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -92,20 +92,36 @@ export default {
   },
   data() {
     return {
-      isOpen: false,
+      searchQuery: '',
       form: {
         nombre_ruta: '',
         descripcion_ruta: '',
         ubicacion_ruta: '',
         estado_ruta: false
       },
+      rutas: [
+        { id: 1, date: '12 Jan 2022', nombre_ruta: 'Entrada Estación Quitumbe', descripcion_ruta: '15 gradas hacia abajo', ubicacion_ruta: 'Terminal Quitumbe', estado_ruta: 'Activo' },
+        { id: 2, date: '15 Feb 2022', nombre_ruta: 'Salida Estación Quitumbe', descripcion_ruta: '20 gradas hacia arriba', ubicacion_ruta: 'Terminal Quitumbe', estado_ruta: 'Inactivo' },
+        // Añade más rutas aquí según sea necesario
+      ],
       isOffCanvasOpen: false,
       offCanvasTitle: ''
     };
   },
+  computed: {
+    filteredRutas() {
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.rutas.filter(ruta => 
+        ruta.nombre_ruta.toLowerCase().includes(query)
+      );
+    }
+  },
   methods: {
-    openOffCanvas(action) {
+    openOffCanvas(action, ruta) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Ruta' : 'Editar Ruta';
+      if (action === 'edit') {
+        this.form = { ...ruta };
+      }
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -114,7 +130,7 @@ export default {
     redirectToForm() {
       this.$router.push('/create/Ruta');
     },
-    handleDeleteClick() {
+    handleDeleteClick(id) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -125,6 +141,7 @@ export default {
         confirmButtonText: 'Sí, bórralo!'
       }).then((result) => {
         if (result.isConfirmed) {
+          this.rutas = this.rutas.filter(ruta => ruta.id !== id);
           Swal.fire(
             '¡Borrado!',
             'La ruta ha sido borrada.',
@@ -132,9 +149,6 @@ export default {
           )
         }
       })
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
     },
     submitForm() {
       Swal.fire({
@@ -154,5 +168,3 @@ export default {
 </script>
 
 <style scoped src="@/assets/styles/ruta/rutaView.css"></style>
-
-

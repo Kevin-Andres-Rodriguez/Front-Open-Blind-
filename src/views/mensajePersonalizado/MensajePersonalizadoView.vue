@@ -6,7 +6,7 @@
       <h2>Mensaje Personalizado</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar...">
+        <input type="text" placeholder="Buscar por descripción..." v-model="searchQuery">
       </div>
     </div>
     <div class="table-container">
@@ -21,21 +21,21 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>12 Jan 2022</td>
-            <td>Perdi completamente la vista</td>
-            <td>0988754236</td>
-            <td class="status">Activo</td>
+          <tr v-for="mensaje in filteredMensajes" :key="mensaje.id">
+            <td>{{ mensaje.fecha }}</td>
+            <td>{{ mensaje.mensaje }}</td>
+            <td>{{ mensaje.contacto }}</td>
+            <td class="status">{{ mensaje.estado_usuario }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
-              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit', mensaje)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(mensaje.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>8 results found: Showing page 1 of 100</p>
+        <p>{{ filteredMensajes.length }} resultados encontrados: Mostrando página 1 de 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -90,22 +90,36 @@ export default {
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
+      searchQuery: '',
       form: {
         fecha: '',
         mensaje: '',
         contacto: '',
         estado_usuario: false
       },
+      mensajes: [
+        { id: 1, fecha: '12 Jan 2022', mensaje: 'Perdí completamente la vista', contacto: '0988754236', estado_usuario: 'Activo' },
+        { id: 2, fecha: '15 Feb 2022', mensaje: 'Necesito ayuda con mi cuenta', contacto: '0998765432', estado_usuario: 'Inactivo' },
+        // Añade más mensajes personalizados aquí según sea necesario
+      ],
       isOffCanvasOpen: false,
       offCanvasTitle: ''
     };
   },
+  computed: {
+    filteredMensajes() {
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.mensajes.filter(mensaje => 
+        mensaje.mensaje.toLowerCase().includes(query)
+      );
+    }
+  },
   methods: {
-    openOffCanvas(action) {
+    openOffCanvas(action, mensaje) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Mensaje' : 'Editar Mensaje Personalizado';
+      if (action === 'edit') {
+        this.form = { ...mensaje };
+      }
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -114,7 +128,7 @@ export default {
     redirectToForm() {
       this.$router.push('/create/MensajePersonalizado');
     },
-    handleDeleteClick() {
+    handleDeleteClick(id) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -125,6 +139,7 @@ export default {
         confirmButtonText: 'Sí, bórralo!'
       }).then((result) => {
         if (result.isConfirmed) {
+          this.mensajes = this.mensajes.filter(mensaje => mensaje.id !== id);
           Swal.fire(
             '¡Borrado!',
             'El mensaje ha sido borrado.',
@@ -132,9 +147,6 @@ export default {
           )
         }
       })
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
     },
     submitForm() {
       Swal.fire({
@@ -154,5 +166,3 @@ export default {
 </script>
 
 <style scoped src="@/assets/styles/mensajePersonalizado/mensajePersonalizadoView.css"></style>
-
-

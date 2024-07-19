@@ -6,7 +6,7 @@
       <h2>Guia de Voz</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar...">
+        <input type="text" placeholder="Buscar..." v-model="searchQuery">
       </div>
     </div>
     <div class="table-container">
@@ -21,21 +21,21 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>12 Jan 2022</td>
-            <td>Ingreso al Metro</td>
-            <td>https://www.youtube.com/ </td>
-            <td class="status">Activo</td>
+          <tr v-for="item in filteredItems" :key="item.description">
+            <td>{{ item.date }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.audioUrl }}</td>
+            <td class="status">{{ item.status }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
-              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit', item)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(item.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>8 results found: Showing page 1 of 100</p>
+        <p>{{ filteredItems.length }} results found: Showing page 1 of 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -50,21 +50,21 @@
       <div class="off-canvas-body">
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
-            <label for="nombre_usuario" class="form-label">Date <span class="required">*</span>:</label>
-            <input type="date" id="nombre_usuario" v-model="form.nombre_usuario" class="form-control" required>
+            <label for="date" class="form-label">Date <span class="required">*</span>:</label>
+            <input type="date" id="date" v-model="form.date" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="apellido_usuario" class="form-label">Descripción <span class="required">*</span>:</label>
-            <input type="text" id="apellido_usuario" v-model="form.descripcion" class="form-control" required>
+            <label for="description" class="form-label">Descripción <span class="required">*</span>:</label>
+            <input type="text" id="description" v-model="form.description" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="correo_usuario" class="form-label">Audio URL <span class="required">*</span>:</label>
-            <input type="email" id="correo_usuario" v-model="form.ubicacion" class="form-control" required>
+            <label for="audioUrl" class="form-label">Audio URL <span class="required">*</span>:</label>
+            <input type="url" id="audioUrl" v-model="form.audioUrl" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
+            <label for="status" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_usuario">
+              <input type="checkbox" v-model="form.status">
               <span class="slider round"></span>
             </label>
           </div>
@@ -90,23 +90,36 @@ export default {
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
+      searchQuery: '',
       form: {
-        nombre_usuario: '',
-        apellido_usuario: '',
-        correo_usuario: '',
-        ubicacion: '',
-        estado_usuario: false
+        date: '',
+        description: '',
+        audioUrl: '',
+        status: false
       },
+      items: [
+        { id: 1, date: '12 Jan 2022', description: 'Ingreso al Metro', audioUrl: 'https://www.youtube.com/', status: 'Activo' },
+        { id: 2, date: '15 Feb 2022', description: 'Información adicional', audioUrl: 'https://www.example.com/', status: 'Inactivo' },
+       
+      ],
       isOffCanvasOpen: false,
       offCanvasTitle: ''
     };
   },
+  computed: {
+    filteredItems() {
+      const query = this.searchQuery.toLowerCase();
+      return this.items.filter(item => item.id.toString().includes(query) || 
+                                        item.description.toLowerCase().includes(query) || 
+                                        item.audioUrl.toLowerCase().includes(query));
+    }
+  },
   methods: {
-    openOffCanvas(action) {
+    openOffCanvas(action, item) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Guia de Voz' : 'Editar Guia de Voz';
+      if (action === 'edit') {
+        this.form = { ...item };
+      }
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -115,7 +128,7 @@ export default {
     redirectToForm() {
       this.$router.push('/create/GuiaVoz');
     },
-    handleDeleteClick() {
+    handleDeleteClick(id) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -126,25 +139,23 @@ export default {
         confirmButtonText: 'Sí, bórralo!'
       }).then((result) => {
         if (result.isConfirmed) {
+          this.items = this.items.filter(item => item.id !== id);
           Swal.fire(
             '¡Borrado!',
-            'Tu archivo ha sido borrado.',
+            'El mensaje ha sido borrado.',
             'success'
           )
         }
       })
     },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
-    },
     submitForm() {
       Swal.fire({
         title: 'Datos enviados',
         text: `
-          Date: ${this.form.nombre_usuario}
-          Descripción: ${this.form.apellido_usuario}
-          Audio URL: ${this.form.correo_usuario}
-          Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
+          Date: ${this.form.date}
+          Descripción: ${this.form.description}
+          Audio URL: ${this.form.audioUrl}
+          Estado: ${this.form.status ? 'Activo' : 'Inactivo'}
         `,
         icon: 'success',
       });
@@ -156,318 +167,3 @@ export default {
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>
 
-
-<style scoped>
-.container {
-  margin: 0 auto;
-  padding: 20px;
-  max-width: 1950px;
-  width: 90%;
-  text-align: center; /* Centrando el contenido horizontalmente */
-}
-
-.header {
-  background-color: #e0e4e8;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  text-align: center; /* Centrando el contenido horizontalmente */
-}
-
-.header h2 {
-  margin: 0;
-  font-size: 24px;
-}
-
-.search-box {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 5px 10px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  margin-left: auto; /* Alinea la caja de búsqueda a la derecha */
-}
-
-.search-box input {
-  border: none;
-  outline: none;
-  margin-left: 5px;
-}
-
-.table-container {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  padding: 20px;
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-th,
-td {
-  padding: 12px;
-  text-align: left;
-  white-space: nowrap;
-}
-
-th {
-  background-color: #f0f2f5;
-  color: #333;
-  font-weight: bold;
-}
-
-th:nth-child(1),
-td:nth-child(1) {
-  width: 12.5%;
-}
-
-th:nth-child(2),
-td:nth-child(2) {
-  width: 12.5%;
-}
-
-th:nth-child(3),
-td:nth-child(3) {
-  width: 12.5%;
-}
-
-th:nth-child(4),
-td:nth-child(4) {
-  width: 12.5%;
-}
-
-th:nth-child(5),
-td:nth-child(5) {
-  width: 12.5%;
-}
-
-th:nth-child(6),
-td:nth-child(6) {
-  width: 12.5%;
-}
-
-th:nth-child(7),
-td:nth-child(7) {
-  width: 12.5%;
-}
-
-th:nth-child(8),
-td:nth-child(8) {
-  width: 12.5%;
-}
-
-tr:nth-child(even) {
-  background-color: #f9fafb;
-}
-
-tr:hover {
-  background-color: #f1f1f1;
-}
-
-.actions i {
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-.actions i:hover {
-  color: #007bff;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center; /* Centrando la paginación horizontalmente */
-  padding: 20px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.pagination button {
-  background-color: #e0e4e8;
-  border: none;
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.pagination button.active {
-  background-color: #007bff;
-  color: white;
-}
-
-.pagination p {
-  margin: 0;
-  margin-right: auto;
-  color: #666;
-}
-
-.status {
-  color: #28a745;
-  font-weight: bold;
-}
-
-.dropdown-content {
-  display: none;
-  position: absolute;
-  top: 60px;
-  right: 0;
-  background-color: #f1f1f1;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  border-radius: 5px;
-}
-
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-content a:hover {
-  background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* Off-Canvas Styles */
-
-.off-canvas {
-  position: fixed;
-  top: 0;
-  right: -100%;
-  width: 100%;
-  max-width: 300px;
-  height: 100%;
-  background-color: #fff;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-  transition: right 0.3s ease;
-  z-index: 1000;
-}
-
-.off-canvas.open {
-  right: 0;
-}
-
-.off-canvas-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 2px;
-  background-color: #007bff;
-  color: #fff;
-}
-
-.off-canvas-body {
-  padding: 10px;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-
-.form {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.form-group {
-  flex: 1 1 100%; /* Asegura que los campos del formulario ocupen el ancho completo */
-  margin: 10px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 34px;
-  height: 20px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: .4s;
-  border-radius: 20px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 12px;
-  width: 12px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #007bff;
-}
-
-input:checked + .slider:before {
-  transform: translateX(14px);
-}
-
-.form-group-button {
-  text-align: center;
-  width: 100%;
-}
-
-.btn {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background-color: #0056b3;
-}
-</style>

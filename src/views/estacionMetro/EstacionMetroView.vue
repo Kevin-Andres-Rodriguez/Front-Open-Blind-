@@ -3,10 +3,10 @@
   <div class="container">
     <Nav />
     <div class="header">
-      <h2>Estanción de Metro</h2>
+      <h2>Estación de Metro</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar...">
+        <input type="text" v-model="searchQuery" placeholder="Buscar...">
       </div>
     </div>
     <div class="table-container">
@@ -22,12 +22,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>12 Jan 2022</td>
-            <td>Juan</td>
-            <td>Sur de Quito</td>
-            <td>Av. Cóndor Ñan y Av. Mariscal Sucre</td>
-            <td class="status">Activo</td>
+          <tr v-for="estacion in filteredEstaciones" :key="estacion.id">
+            <td>{{ estacion.date }}</td>
+            <td>{{ estacion.nombre_estacion }}</td>
+            <td>{{ estacion.descripcion_estacion }}</td>
+            <td>{{ estacion.ubicacion_estacion }}</td>
+            <td class="status">{{ estacion.estado_estacion ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
@@ -64,9 +64,9 @@
             <input type="text" id="ubicacion_estacion" v-model="form.ubicacion_estacion" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
+            <label for="estado_estacion" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_usuario">
+              <input type="checkbox" v-model="form.estado_estacion">
               <span class="slider round"></span>
             </label>
           </div>
@@ -92,9 +92,12 @@ export default {
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
+      searchQuery: '',
+      estaciones: [
+        { id: 1, date: '12 Jan 2022', nombre_estacion: 'Quitumbe', descripcion_estacion: 'Sur de Quito', ubicacion_estacion: 'Av. Cóndor Ñan y Av. Mariscal Sucre', estado_estacion: true },
+        { id: 2, date: '20 Jan 2022', nombre_estacion: 'Solanda', descripcion_estacion: 'Sur de Quito', ubicacion_estacion: 'Av. Ajavi', estado_estacion: true },
+        // Añade más datos de estaciones aquí
+      ],
       form: {
         nombre_estacion: '',
         descripcion_estacion: '',
@@ -104,6 +107,17 @@ export default {
       isOffCanvasOpen: false,
       offCanvasTitle: ''
     };
+  },
+  computed: {
+    filteredEstaciones() {
+      if (!this.searchQuery) {
+        return this.estaciones;
+      }
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.estaciones.filter(estacion => 
+        estacion.nombre_estacion.toLowerCase().includes(query)
+      );
+    }
   },
   methods: {
     openOffCanvas(action) {
@@ -135,15 +149,12 @@ export default {
         }
       })
     },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
-    },
     submitForm() {
       Swal.fire({
         title: 'Datos enviados',
         text: `
           Nombre: ${this.form.nombre_estacion}
-          Descripcion: ${this.form.descripcion_estacion}
+          Descripción: ${this.form.descripcion_estacion}
           Ubicación: ${this.form.ubicacion_estacion}
           Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
         `,
