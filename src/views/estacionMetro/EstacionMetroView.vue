@@ -22,6 +22,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr v-if="filteredEstaciones.length === 0">
+            <td colspan="6" class="text-center">Sin registros</td>
+          </tr>
           <tr v-for="estacion in filteredEstaciones" :key="estacion.id">
             <td>{{ estacion.date }}</td>
             <td>{{ estacion.nombre_estacion }}</td>
@@ -29,15 +32,15 @@
             <td>{{ estacion.ubicacion_estacion }}</td>
             <td class="status">{{ estacion.estado_estacion ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
-              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
+              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit', estacion)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>{{ filteredEstaciones.length }} results found: Showing page 1 of 100</p>
+        <p>{{ filteredEstaciones.length }} resultados encontrados: Página 1 de 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -99,6 +102,7 @@ export default {
         // Añade más datos de estaciones aquí
       ],
       form: {
+        id: null,
         nombre_estacion: '',
         descripcion_estacion: '',
         ubicacion_estacion: '',
@@ -120,8 +124,20 @@ export default {
     }
   },
   methods: {
-    openOffCanvas(action) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Estación' : 'Editar Estación';
+    openOffCanvas(action, estacion = null) {
+      if (action === 'add') {
+        this.offCanvasTitle = 'Agregar Estación';
+        this.form = {
+          id: null,
+          nombre_estacion: '',
+          descripcion_estacion: '',
+          ubicacion_estacion: '',
+          estado_estacion: false
+        };
+      } else {
+        this.offCanvasTitle = 'Editar Estación';
+        this.form = { ...estacion }; // Clonamos el objeto estacion para evitar modificaciones directas
+      }
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -153,20 +169,35 @@ export default {
       });
     },
     submitForm() {
-      Swal.fire({
-        title: 'Datos enviados',
-        text: `
-          Nombre: ${this.form.nombre_estacion}
-          Descripción: ${this.form.descripcion_estacion}
-          Ubicación: ${this.form.ubicacion_estacion}
-          Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-      });
+      if (!this.form.nombre_estacion || !this.form.descripcion_estacion || !this.form.ubicacion_estacion) {
+        Swal.fire({
+          title: 'Campos vacíos',
+          text: 'Por favor, completa todos los campos.',
+          icon: 'warning',
+        });
+        return;
+      }
+
+      if (this.form.id === null) {
+        // Adding a new station (if ID is null)
+        const newId = this.estaciones.length ? Math.max(...this.estaciones.map(e => e.id)) + 1 : 1;
+        this.estaciones.push({ ...this.form, id: newId, date: new Date().toLocaleDateString() });
+        Swal.fire('¡Agregado!', 'La estación ha sido agregada.', 'success');
+      } else {
+        // Updating an existing station
+        const index = this.estaciones.findIndex(e => e.id === this.form.id);
+        if (index !== -1) {
+          this.estaciones[index] = { ...this.form };
+          Swal.fire('¡Actualizado!', 'La estación ha sido actualizada.', 'success');
+        }
+      }
+
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
+
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>

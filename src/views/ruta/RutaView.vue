@@ -22,6 +22,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr v-if="filteredRutas.length === 0">
+            <td colspan="6" class="text-center">Sin registros</td>
+          </tr>
           <tr v-for="ruta in filteredRutas" :key="ruta.id">
             <td>{{ ruta.date }}</td>
             <td>{{ ruta.nombre_ruta }}</td>
@@ -29,7 +32,7 @@
             <td>{{ ruta.ubicacion_ruta }}</td>
             <td class="status">{{ ruta.estado_ruta }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
+              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', ruta)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(ruta.id)"></i>
             </td>
@@ -94,6 +97,7 @@ export default {
     return {
       searchQuery: '',
       form: {
+        id: null,
         nombre_ruta: '',
         descripcion_ruta: '',
         ubicacion_ruta: '',
@@ -117,10 +121,18 @@ export default {
     }
   },
   methods: {
-    openOffCanvas(action, ruta) {
+    openOffCanvas(action, ruta = null) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Ruta' : 'Editar Ruta';
-      if (action === 'edit') {
-        this.form = { ...ruta };
+      if (action === 'edit' && ruta) {
+        this.form = { ...ruta }; // Clonamos el objeto para evitar modificaciones directas
+      } else {
+        this.form = {
+          id: null,
+          nombre_ruta: '',
+          descripcion_ruta: '',
+          ubicacion_ruta: '',
+          estado_ruta: false
+        };
       }
       this.isOffCanvasOpen = true;
     },
@@ -146,21 +158,35 @@ export default {
             '¡Borrado!',
             'La ruta ha sido borrada.',
             'success'
-          )
+          );
         }
-      })
+      });
     },
     submitForm() {
-      Swal.fire({
-        title: 'Datos enviados',
-        text: `
-          Nombre de la ruta: ${this.form.nombre_ruta}
-          Descripción: ${this.form.descripcion_ruta}
-          Ubicación: ${this.form.ubicacion_ruta}
-          Estado: ${this.form.estado_ruta ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-      });
+      // Validar campos vacíos
+      if (!this.form.nombre_ruta || !this.form.descripcion_ruta || !this.form.ubicacion_ruta) {
+        Swal.fire({
+          title: 'Campos vacíos',
+          text: 'Por favor, completa todos los campos.',
+          icon: 'warning'
+        });
+        return;
+      }
+
+      if (this.form.id === null) {
+        // Añadir una nueva ruta
+        const newId = this.rutas.length ? Math.max(...this.rutas.map(e => e.id)) + 1 : 1;
+        this.rutas.push({ ...this.form, id: newId, estado_ruta: this.form.estado_ruta ? 'Activo' : 'Inactivo' });
+        Swal.fire('¡Agregado!', 'La ruta ha sido agregada.', 'success');
+      } else {
+        // Actualizar una ruta existente
+        const index = this.rutas.findIndex(e => e.id === this.form.id);
+        if (index !== -1) {
+          this.rutas[index] = { ...this.form, estado_ruta: this.form.estado_ruta ? 'Activo' : 'Inactivo' };
+          Swal.fire('¡Actualizado!', 'La ruta ha sido actualizada.', 'success');
+        }
+      }
+
       this.closeOffCanvas();
     }
   }

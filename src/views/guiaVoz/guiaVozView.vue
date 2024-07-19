@@ -3,7 +3,7 @@
   <div class="container">
     <Nav />
     <div class="header">
-      <h2>Guia de Voz</h2>
+      <h2>Guía de Voz</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Buscar..." v-model="searchQuery">
@@ -21,7 +21,10 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="item in filteredItems" :key="item.description">
+          <tr v-if="filteredItems.length === 0">
+            <td colspan="5" class="text-center">Sin registros</td>
+          </tr>
+          <tr v-for="item in filteredItems" :key="item.id">
             <td>{{ item.date }}</td>
             <td>{{ item.description }}</td>
             <td>{{ item.audioUrl }}</td>
@@ -35,7 +38,7 @@
         </tbody>
       </table>
       <div class="pagination">
-        <p>{{ filteredItems.length }} results found: Showing page 1 of 100</p>
+        <p>{{ filteredItems.length }} resultados encontrados: Página 1 de 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -92,6 +95,7 @@ export default {
     return {
       searchQuery: '',
       form: {
+        id: null,
         date: '',
         description: '',
         audioUrl: '',
@@ -100,7 +104,7 @@ export default {
       items: [
         { id: 1, date: '12 Jan 2022', description: 'Ingreso al Metro', audioUrl: 'https://www.youtube.com/', status: 'Activo' },
         { id: 2, date: '15 Feb 2022', description: 'Información adicional', audioUrl: 'https://www.example.com/', status: 'Inactivo' },
-       
+        // Añade más datos de items aquí
       ],
       isOffCanvasOpen: false,
       offCanvasTitle: ''
@@ -109,16 +113,26 @@ export default {
   computed: {
     filteredItems() {
       const query = this.searchQuery.toLowerCase();
-      return this.items.filter(item => item.id.toString().includes(query) || 
-                                        item.description.toLowerCase().includes(query) || 
-                                        item.audioUrl.toLowerCase().includes(query));
+      return this.items.filter(item => 
+        item.date.toLowerCase().includes(query) || 
+        item.description.toLowerCase().includes(query) || 
+        item.audioUrl.toLowerCase().includes(query)
+      );
     }
   },
   methods: {
-    openOffCanvas(action, item) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Guia de Voz' : 'Editar Guia de Voz';
-      if (action === 'edit') {
-        this.form = { ...item };
+    openOffCanvas(action, item = null) {
+      this.offCanvasTitle = action === 'add' ? 'Agregar Guía de Voz' : 'Editar Guía de Voz';
+      if (action === 'edit' && item) {
+        this.form = { ...item }; // Clonamos el objeto para evitar modificaciones directas
+      } else {
+        this.form = {
+          id: null,
+          date: '',
+          description: '',
+          audioUrl: '',
+          status: false
+        };
       }
       this.isOffCanvasOpen = true;
     },
@@ -142,28 +156,44 @@ export default {
           this.items = this.items.filter(item => item.id !== id);
           Swal.fire(
             '¡Borrado!',
-            'El mensaje ha sido borrado.',
+            'La guía de voz ha sido borrada.',
             'success'
-          )
+          );
         }
-      })
+      });
     },
     submitForm() {
-      Swal.fire({
-        title: 'Datos enviados',
-        text: `
-          Date: ${this.form.date}
-          Descripción: ${this.form.description}
-          Audio URL: ${this.form.audioUrl}
-          Estado: ${this.form.status ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-      });
+      // Validar campos vacíos
+      if (!this.form.date || !this.form.description || !this.form.audioUrl) {
+        Swal.fire({
+          title: 'Campos vacíos',
+          text: 'Por favor, completa todos los campos.',
+          icon: 'warning'
+        });
+        return;
+      }
+
+      if (this.form.id === null) {
+        // Adding a new item
+        const newId = this.items.length ? Math.max(...this.items.map(e => e.id)) + 1 : 1;
+        this.items.push({ ...this.form, id: newId, status: this.form.status ? 'Activo' : 'Inactivo' });
+        Swal.fire('¡Agregado!', 'La guía de voz ha sido agregada.', 'success');
+      } else {
+        // Updating an existing item
+        const index = this.items.findIndex(e => e.id === this.form.id);
+        if (index !== -1) {
+          this.items[index] = { ...this.form, status: this.form.status ? 'Activo' : 'Inactivo' };
+          Swal.fire('¡Actualizado!', 'La guía de voz ha sido actualizada.', 'success');
+        }
+      }
+
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
+
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>
 

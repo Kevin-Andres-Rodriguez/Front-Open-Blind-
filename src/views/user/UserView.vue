@@ -24,6 +24,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr v-if="filteredUsers.length === 0">
+            <td colspan="8" class="text-center">Sin registros</td>
+          </tr>
           <tr v-for="user in filteredUsers" :key="user.id">
             <td>{{ user.date }}</td>
             <td>{{ user.nombre }}</td>
@@ -33,15 +36,15 @@
             <td>{{ user.fechaNacimiento }}</td>
             <td class="status">{{ user.estado }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
-              <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
+              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
+              <i class="fas fa-edit" @click="openOffCanvas('edit', user)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(user.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>{{ filteredUsers.length }} results found: Showing page 1 of 100</p>
+        <p>{{ filteredUsers.length }} resultados encontrados: Mostrando página 1 de 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -104,10 +107,10 @@ export default {
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
+      isOffCanvasOpen: false,
+      offCanvasTitle: '',
       form: {
+        id: null,
         nombre_usuario: '',
         apellido_usuario: '',
         correo_usuario: '',
@@ -117,31 +120,51 @@ export default {
       },
       searchQuery: '',
       users: [
-        { id: 1, date: '12 Jan 2022', nombre: 'Juan', apellido: 'Andrade', correo: 'juandandrade@gmail.com', telefono: '0987475123', fechaNacimiento: '14-04-2002', estado: 'Activo' },
-        { id: 2, date: '15 Feb 2022', nombre: 'Maria', apellido: 'Gomez', correo: 'maria.gomez@gmail.com', telefono: '0987654321', fechaNacimiento: '22-08-1995', estado: 'Inactivo' },
-        { id: 3, date: '20 Mar 2022', nombre: 'Carlos', apellido: 'Perez', correo: 'carlos.perez@gmail.com', telefono: '0981234567', fechaNacimiento: '30-12-1988', estado: 'Activo' },
-        { id: 4, date: '25 Apr 2022', nombre: 'Ana', apellido: 'Martinez', correo: 'ana.martinez@gmail.com', telefono: '0988765432', fechaNacimiento: '10-05-1999', estado: 'Inactivo' },
-        { id: 5, date: '30 May 2022', nombre: 'Luis', apellido: 'Rodriguez', correo: 'luis.rodriguez@gmail.com', telefono: '0981112233', fechaNacimiento: '02-11-1975', estado: 'Activo' },
-        { id: 6, date: '10 Jun 2022', nombre: 'Elena', apellido: 'Fernandez', correo: 'elena.fernandez@gmail.com', telefono: '0983334455', fechaNacimiento: '16-03-1985', estado: 'Inactivo' },
-        { id: 7, date: '15 Jul 2022', nombre: 'Pablo', apellido: 'Lopez', correo: 'pablo.lopez@gmail.com', telefono: '0985556677', fechaNacimiento: '05-09-1990', estado: 'Activo' },
-        { id: 8, date: '20 Aug 2022', nombre: 'Lucia', apellido: 'Ramirez', correo: 'lucia.ramirez@gmail.com', telefono: '0989990001', fechaNacimiento: '20-01-2000', estado: 'Inactivo' }
-      ],
-      isOffCanvasOpen: false,
-      offCanvasTitle: ''
+        { id: 1, date: '12 Jan 2022', nombre: 'Juan', apellido: 'Andrade', correo: 'juandandrade@gmail.com', telefono: '0987475123', fechaNacimiento: '2002-04-14', estado: 'Activo' },
+        { id: 2, date: '15 Feb 2022', nombre: 'Maria', apellido: 'Gomez', correo: 'maria.gomez@gmail.com', telefono: '0987654321', fechaNacimiento: '1995-08-22', estado: 'Inactivo' },
+        { id: 3, date: '20 Mar 2022', nombre: 'Carlos', apellido: 'Perez', correo: 'carlos.perez@gmail.com', telefono: '0981234567', fechaNacimiento: '1988-12-30', estado: 'Activo' },
+        { id: 4, date: '25 Apr 2022', nombre: 'Ana', apellido: 'Martinez', correo: 'ana.martinez@gmail.com', telefono: '0988765432', fechaNacimiento: '1999-05-10', estado: 'Inactivo' },
+        { id: 5, date: '30 May 2022', nombre: 'Luis', apellido: 'Rodriguez', correo: 'luis.rodriguez@gmail.com', telefono: '0981112233', fechaNacimiento: '1975-11-02', estado: 'Activo' },
+        { id: 6, date: '10 Jun 2022', nombre: 'Elena', apellido: 'Fernandez', correo: 'elena.fernandez@gmail.com', telefono: '0983334455', fechaNacimiento: '1985-03-16', estado: 'Inactivo' },
+        { id: 7, date: '15 Jul 2022', nombre: 'Pablo', apellido: 'Lopez', correo: 'pablo.lopez@gmail.com', telefono: '0985556677', fechaNacimiento: '1990-09-05', estado: 'Activo' },
+        { id: 8, date: '20 Aug 2022', nombre: 'Lucia', apellido: 'Ramirez', correo: 'lucia.ramirez@gmail.com', telefono: '0989990001', fechaNacimiento: '2000-01-20', estado: 'Inactivo' }
+      ]
     };
   },
   computed: {
     filteredUsers() {
       const query = this.searchQuery.toLowerCase();
-      return this.users.filter(user => 
+      return this.users.filter(user =>
         user.nombre.toLowerCase().includes(query) ||
-        user.id.toString().includes(query)
+        user.apellido.toLowerCase().includes(query) ||
+        user.correo.toLowerCase().includes(query)
       );
     }
   },
   methods: {
-    openOffCanvas(action) {
+    openOffCanvas(action, user = null) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Usuario' : 'Editar Usuario';
+      if (action === 'edit' && user) {
+        this.form = {
+          id: user.id,
+          nombre_usuario: user.nombre,
+          apellido_usuario: user.apellido,
+          correo_usuario: user.correo,
+          telefono_usuario: user.telefono,
+          fecha_nacimiento_usuario: user.fechaNacimiento,
+          estado_usuario: user.estado === 'Activo'
+        };
+      } else {
+        this.form = {
+          id: null,
+          nombre_usuario: '',
+          apellido_usuario: '',
+          correo_usuario: '',
+          telefono_usuario: '',
+          fecha_nacimiento_usuario: '',
+          estado_usuario: false
+        };
+      }
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -160,9 +183,7 @@ export default {
         cancelButtonText: 'Cancelar'
       }).then((result) => {
         if (result.isConfirmed) {
-          // Remove user from the users array
           this.users = this.users.filter(user => user.id !== userId);
-
           Swal.fire(
             'Eliminado!',
             'El usuario ha sido eliminado.',
@@ -171,10 +192,33 @@ export default {
         }
       });
     },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
-    },
     submitForm() {
+      if (this.form.id) { // Editar
+        const index = this.users.findIndex(user => user.id === this.form.id);
+        if (index !== -1) {
+          this.users[index] = {
+            ...this.users[index],
+            nombre: this.form.nombre_usuario,
+            apellido: this.form.apellido_usuario,
+            correo: this.form.correo_usuario,
+            telefono: this.form.telefono_usuario,
+            fechaNacimiento: this.form.fecha_nacimiento_usuario,
+            estado: this.form.estado_usuario ? 'Activo' : 'Inactivo'
+          };
+        }
+      } else { // Agregar
+        this.users.push({
+          id: Date.now(), // Generar ID único para el nuevo usuario
+          date: new Date().toLocaleDateString(),
+          nombre: this.form.nombre_usuario,
+          apellido: this.form.apellido_usuario,
+          correo: this.form.correo_usuario,
+          telefono: this.form.telefono_usuario,
+          fechaNacimiento: this.form.fecha_nacimiento_usuario,
+          estado: this.form.estado_usuario ? 'Activo' : 'Inactivo'
+        });
+      }
+      
       Swal.fire({
         title: 'Datos Guardados',
         text: `
@@ -188,11 +232,13 @@ export default {
         icon: 'success',
         confirmButtonText: 'OK'
       });
+
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
 
 
 <style scoped src="@/assets/styles/User/UserView.css"></style>

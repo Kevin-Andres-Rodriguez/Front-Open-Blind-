@@ -21,13 +21,16 @@
           </tr>
         </thead>
         <tbody>
+          <tr v-if="filteredMensajes.length === 0">
+            <td colspan="5" class="text-center">Sin registros</td>
+          </tr>
           <tr v-for="mensaje in filteredMensajes" :key="mensaje.id">
             <td>{{ mensaje.fecha }}</td>
             <td>{{ mensaje.mensaje }}</td>
             <td>{{ mensaje.contacto }}</td>
             <td class="status">{{ mensaje.estado_usuario }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
+              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', mensaje)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(mensaje.id)"></i>
             </td>
@@ -92,6 +95,7 @@ export default {
     return {
       searchQuery: '',
       form: {
+        id: null,
         fecha: '',
         mensaje: '',
         contacto: '',
@@ -115,10 +119,18 @@ export default {
     }
   },
   methods: {
-    openOffCanvas(action, mensaje) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Mensaje' : 'Editar Mensaje Personalizado';
-      if (action === 'edit') {
-        this.form = { ...mensaje };
+    openOffCanvas(action, mensaje = null) {
+      this.offCanvasTitle = action === 'add' ? 'Agregar Mensaje Personalizado' : 'Editar Mensaje Personalizado';
+      if (action === 'edit' && mensaje) {
+        this.form = { ...mensaje }; // Clonamos el objeto para evitar modificaciones directas
+      } else {
+        this.form = {
+          id: null,
+          fecha: '',
+          mensaje: '',
+          contacto: '',
+          estado_usuario: false
+        };
       }
       this.isOffCanvasOpen = true;
     },
@@ -144,25 +156,41 @@ export default {
             '¡Borrado!',
             'El mensaje ha sido borrado.',
             'success'
-          )
+          );
         }
-      })
+      });
     },
     submitForm() {
-      Swal.fire({
-        title: 'Datos enviados',
-        text: `
-          Fecha: ${this.form.fecha}
-          Mensaje: ${this.form.mensaje}
-          Contacto: ${this.form.contacto}
-          Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-      });
+      // Validar campos vacíos
+      if (!this.form.fecha || !this.form.mensaje || !this.form.contacto) {
+        Swal.fire({
+          title: 'Campos vacíos',
+          text: 'Por favor, completa todos los campos.',
+          icon: 'warning'
+        });
+        return;
+      }
+
+      if (this.form.id === null) {
+        // Adding a new message
+        const newId = this.mensajes.length ? Math.max(...this.mensajes.map(e => e.id)) + 1 : 1;
+        this.mensajes.push({ ...this.form, id: newId, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' });
+        Swal.fire('¡Agregado!', 'El mensaje ha sido agregado.', 'success');
+      } else {
+        // Updating an existing message
+        const index = this.mensajes.findIndex(e => e.id === this.form.id);
+        if (index !== -1) {
+          this.mensajes[index] = { ...this.form, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' };
+          Swal.fire('¡Actualizado!', 'El mensaje ha sido actualizado.', 'success');
+        }
+      }
+
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
+
 
 <style scoped src="@/assets/styles/mensajePersonalizado/mensajePersonalizadoView.css"></style>

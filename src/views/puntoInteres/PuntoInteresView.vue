@@ -3,7 +3,7 @@
   <div class="container">
     <Nav />
     <div class="header">
-      <h2>Punto de Interes</h2>
+      <h2>Punto de Interés</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
         <input type="text" placeholder="Buscar por nombre..." v-model="searchQuery">
@@ -22,6 +22,9 @@
           </tr>
         </thead>
         <tbody>
+          <tr v-if="filteredPuntos.length === 0">
+            <td colspan="6" class="text-center">Sin registros</td>
+          </tr>
           <tr v-for="punto in filteredPuntos" :key="punto.id">
             <td>{{ punto.fecha }}</td>
             <td>{{ punto.nombres }}</td>
@@ -29,7 +32,7 @@
             <td>{{ punto.ubicacion }}</td>
             <td class="status">{{ punto.estado_usuario }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
+              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', punto)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.id)"></i>
             </td>
@@ -98,6 +101,7 @@ export default {
     return {
       searchQuery: '',
       form: {
+        id: null,
         fecha: '',
         nombres: '',
         descripcion: '',
@@ -122,10 +126,19 @@ export default {
     }
   },
   methods: {
-    openOffCanvas(action, punto) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Punto de Interes' : 'Editar Punto de Interes';
-      if (action === 'edit') {
-        this.form = { ...punto };
+    openOffCanvas(action, punto = null) {
+      this.offCanvasTitle = action === 'add' ? 'Agregar Punto de Interés' : 'Editar Punto de Interés';
+      if (action === 'edit' && punto) {
+        this.form = { ...punto }; // Clonamos el objeto para evitar modificaciones directas
+      } else {
+        this.form = {
+          id: null,
+          fecha: '',
+          nombres: '',
+          descripcion: '',
+          ubicacion: '',
+          estado_usuario: false
+        };
       }
       this.isOffCanvasOpen = true;
     },
@@ -151,26 +164,43 @@ export default {
             '¡Borrado!',
             'El punto de interés ha sido borrado.',
             'success'
-          )
+          );
         }
-      })
+      });
     },
     submitForm() {
-      Swal.fire({
-        title: 'Datos enviados',
-        text: `
-          Fecha: ${this.form.fecha}
-          Nombres: ${this.form.nombres}
-          Descripción: ${this.form.descripcion}
-          Ubicación: ${this.form.ubicacion}
-          Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-      });
+      // Validar campos vacíos
+      if (!this.form.fecha || !this.form.nombres || !this.form.descripcion || !this.form.ubicacion) {
+        Swal.fire({
+          title: 'Campos vacíos',
+          text: 'Por favor, completa todos los campos.',
+          icon: 'warning'
+        });
+        return;
+      }
+
+      if (this.form.id === null) {
+        // Adding a new point of interest
+        const newId = this.puntos.length ? Math.max(...this.puntos.map(e => e.id)) + 1 : 1;
+        this.puntos.push({ ...this.form, id: newId, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' });
+        Swal.fire('¡Agregado!', 'El punto de interés ha sido agregado.', 'success');
+      } else {
+        // Updating an existing point of interest
+        const index = this.puntos.findIndex(e => e.id === this.form.id);
+        if (index !== -1) {
+          this.puntos[index] = { ...this.form, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' };
+          Swal.fire('¡Actualizado!', 'El punto de interés ha sido actualizado.', 'success');
+        }
+      }
+
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
+
+
+
 
 <style scoped src="@/assets/styles/puntoInteres/puntoInteresView.css"></style>
