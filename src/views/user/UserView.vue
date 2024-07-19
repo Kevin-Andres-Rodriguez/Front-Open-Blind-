@@ -24,7 +24,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="user in filteredUsers" :key="user.name">
+          <tr v-for="user in filteredUsers" :key="user.id">
             <td>{{ user.date }}</td>
             <td>{{ user.nombre }}</td>
             <td>{{ user.apellido }}</td>
@@ -35,7 +35,7 @@
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(user.id)"></i>
             </td>
           </tr>
         </tbody>
@@ -94,6 +94,7 @@
 <script>
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'UserView',
@@ -149,25 +150,49 @@ export default {
     redirectToForm() {
       this.$router.push('/register');
     },
-    handleDeleteClick() {
-      alert('Botón de eliminar clickeado');
+    handleDeleteClick(userId) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el usuario.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Remove user from the users array
+          this.users = this.users.filter(user => user.id !== userId);
+
+          Swal.fire(
+            'Eliminado!',
+            'El usuario ha sido eliminado.',
+            'success'
+          );
+        }
+      });
     },
     toggleDropdown() {
       this.isOpen = !this.isOpen;
     },
     submitForm() {
-      alert(`
-        Nombres: ${this.form.nombre_usuario}
-        Apellidos: ${this.form.apellido_usuario}
-        Email: ${this.form.correo_usuario}
-        Teléfono: ${this.form.telefono_usuario}
-        Fecha de Nacimiento: ${this.form.fecha_nacimiento_usuario}
-        Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
-      `);
+      Swal.fire({
+        title: 'Datos Guardados',
+        text: `
+          Nombres: ${this.form.nombre_usuario}
+          Apellidos: ${this.form.apellido_usuario}
+          Email: ${this.form.correo_usuario}
+          Teléfono: ${this.form.telefono_usuario}
+          Fecha de Nacimiento: ${this.form.fecha_nacimiento_usuario}
+          Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
+        `,
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
 
 <style scoped src="@/assets/styles/User/UserView.css"></style>

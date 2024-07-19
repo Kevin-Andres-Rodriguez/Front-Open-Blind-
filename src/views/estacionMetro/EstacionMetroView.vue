@@ -31,13 +31,13 @@
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit')"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.id)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>8 results found: Showing page 1 of 100</p>
+        <p>{{ filteredEstaciones.length }} results found: Showing page 1 of 100</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -130,7 +130,7 @@ export default {
     redirectToForm() {
       this.$router.push('/create/EstacionMetro');
     },
-    handleDeleteClick() {
+    handleDeleteClick(estacionId) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -141,13 +141,16 @@ export default {
         confirmButtonText: 'Sí, bórralo!'
       }).then((result) => {
         if (result.isConfirmed) {
+          // Remove the station from the array
+          this.estaciones = this.estaciones.filter(estacion => estacion.id !== estacionId);
+
           Swal.fire(
             '¡Borrado!',
-            'Tu archivo ha sido borrado.',
+            'La estación ha sido borrada.',
             'success'
-          )
+          );
         }
-      })
+      });
     },
     submitForm() {
       Swal.fire({
