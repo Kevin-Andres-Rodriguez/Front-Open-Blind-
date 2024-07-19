@@ -26,7 +26,7 @@
             <td>12 Jan 2022</td>
             <td>Juan</td>
             <td>Sur de Quito</td>
-            <td>Av. Cóndor Ñan y Av. Mariscal Sucre  </td>
+            <td>Av. Cóndor Ñan y Av. Mariscal Sucre</td>
             <td class="status">Activo</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
@@ -61,7 +61,7 @@
           </div>
           <div class="form-group">
             <label for="ubicacion_estacion" class="form-label">Ubicación <span class="required">*</span>:</label>
-            <input type="email" id="ubicacion_estacion" v-model="form.ubicacion_estacion" class="form-control" required>
+            <input type="text" id="ubicacion_estacion" v-model="form.ubicacion_estacion" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
@@ -82,6 +82,7 @@
 <script>
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'EstacionMetroView',
@@ -116,18 +117,38 @@ export default {
       this.$router.push('/create/EstacionMetro');
     },
     handleDeleteClick() {
-      alert('Botón de eliminar clickeado');
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, bórralo!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire(
+            '¡Borrado!',
+            'Tu archivo ha sido borrado.',
+            'success'
+          )
+        }
+      })
     },
     toggleDropdown() {
       this.isOpen = !this.isOpen;
     },
     submitForm() {
-      alert(`
-        Nombre: ${this.form.nombre_estacion}
-        Descripcion: ${this.form.descripcion_estacion}
-        Ubicación: ${this.form.ubicacion_estacion}
-        Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
-      `);
+      Swal.fire({
+        title: 'Datos enviados',
+        text: `
+          Nombre: ${this.form.nombre_estacion}
+          Descripcion: ${this.form.descripcion_estacion}
+          Ubicación: ${this.form.ubicacion_estacion}
+          Estado: ${this.form.estado_estacion ? 'Activo' : 'Inactivo'}
+        `,
+        icon: 'success',
+      });
       this.closeOffCanvas();
     }
   }

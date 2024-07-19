@@ -61,7 +61,6 @@
             <label for="correo_usuario" class="form-label">Audio URL <span class="required">*</span>:</label>
             <input type="email" id="correo_usuario" v-model="form.ubicacion" class="form-control" required>
           </div>
-
           <div class="form-group">
             <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
@@ -81,6 +80,7 @@
 <script>
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
+import Swal from 'sweetalert2';
 
 export default {
   name: 'GuiaVozView',
@@ -97,8 +97,7 @@ export default {
         nombre_usuario: '',
         apellido_usuario: '',
         correo_usuario: '',
-        telefono_usuario: '',
-        fecha_nacimiento_usuario: '',
+        ubicacion: '',
         estado_usuario: false
       },
       isOffCanvasOpen: false,
@@ -107,7 +106,7 @@ export default {
   },
   methods: {
     openOffCanvas(action) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Usuario' : 'Editar Guia de Voz';
+      this.offCanvasTitle = action === 'add' ? 'Agregar Guia de Voz' : 'Editar Guia de Voz';
       this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
@@ -117,25 +116,46 @@ export default {
       this.$router.push('/create/GuiaVoz');
     },
     handleDeleteClick() {
-      alert('Botón de eliminar clickeado');
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, bórralo!'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire(
+            '¡Borrado!',
+            'Tu archivo ha sido borrado.',
+            'success'
+          )
+        }
+      })
     },
     toggleDropdown() {
       this.isOpen = !this.isOpen;
     },
     submitForm() {
-      alert(`
-        Nombres: ${this.form.nombre_usuario}
-        Apellidos: ${this.form.apellido_usuario}
-        Email: ${this.form.correo_usuario}
-        Teléfono: ${this.form.telefono_usuario}
-        Fecha de Nacimiento: ${this.form.fecha_nacimiento_usuario}
-        Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
-      `);
+      Swal.fire({
+        title: 'Datos enviados',
+        text: `
+          Date: ${this.form.nombre_usuario}
+          Descripción: ${this.form.apellido_usuario}
+          Audio URL: ${this.form.correo_usuario}
+          Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
+        `,
+        icon: 'success',
+      });
       this.closeOffCanvas();
     }
   }
 };
 </script>
+
+<style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>
+
 
 <style scoped>
 .container {
