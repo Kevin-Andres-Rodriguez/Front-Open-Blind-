@@ -23,7 +23,7 @@
         </thead>
         <tbody>
           <tr v-if="filteredPuntos.length === 0">
-            <td colspan="6" class="text-center">Sin registros</td>
+            <td colspan="6" class="text-center">Sin registros de Punto de Interés</td>
           </tr>
           <tr v-for="punto in filteredPuntos" :key="punto.id">
             <td>{{ punto.fecha }}</td>
@@ -111,7 +111,6 @@ export default {
       puntos: [
         { id: 1, fecha: '12 Jan 2022', nombres: 'Taquillera 1 El recreo', descripcion: 'Pago Boleteria', ubicacion: 'Sur de Quito', estado_usuario: 'Activo' },
         { id: 2, fecha: '15 Feb 2022', nombres: 'Taquillera 2 El recreo', descripcion: 'Venta de tickets', ubicacion: 'Norte de Quito', estado_usuario: 'Inactivo' },
-        // Añade más puntos de interés aquí según sea necesario
       ],
       isOffCanvasOpen: false,
       offCanvasTitle: ''
@@ -129,7 +128,7 @@ export default {
     openOffCanvas(action, punto = null) {
       this.offCanvasTitle = action === 'add' ? 'Agregar Punto de Interés' : 'Editar Punto de Interés';
       if (action === 'edit' && punto) {
-        this.form = { ...punto }; // Clonamos el objeto para evitar modificaciones directas
+        this.form = { ...punto }; 
       } else {
         this.form = {
           id: null,

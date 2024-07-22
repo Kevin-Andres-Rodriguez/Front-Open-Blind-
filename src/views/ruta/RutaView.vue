@@ -23,7 +23,7 @@
         </thead>
         <tbody>
           <tr v-if="filteredRutas.length === 0">
-            <td colspan="6" class="text-center">Sin registros</td>
+            <td colspan="6" class="text-center">Sin registros de Rutas</td>
           </tr>
           <tr v-for="ruta in filteredRutas" :key="ruta.id">
             <td>{{ ruta.date }}</td>

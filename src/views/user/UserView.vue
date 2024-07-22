@@ -25,7 +25,7 @@
         </thead>
         <tbody>
           <tr v-if="filteredUsers.length === 0">
-            <td colspan="8" class="text-center">Sin registros</td>
+            <td colspan="8" class="text-center">Sin registros de Usuarios</td>
           </tr>
           <tr v-for="user in filteredUsers" :key="user.id">
             <td>{{ user.date }}</td>

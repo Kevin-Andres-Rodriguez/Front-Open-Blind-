@@ -22,7 +22,7 @@
         </thead>
         <tbody>
           <tr v-if="filteredItems.length === 0">
-            <td colspan="5" class="text-center">Sin registros</td>
+            <td colspan="5" class="text-center">Sin registros de Guia de Voz</td>
           </tr>
           <tr v-for="item in filteredItems" :key="item.id">
             <td>{{ item.date }}</td>

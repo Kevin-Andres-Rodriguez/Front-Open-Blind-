@@ -22,7 +22,7 @@
         </thead>
         <tbody>
           <tr v-if="filteredMensajes.length === 0">
-            <td colspan="5" class="text-center">Sin registros</td>
+            <td colspan="5" class="text-center">Sin registros de Mensajes Personalizados</td>
           </tr>
           <tr v-for="mensaje in filteredMensajes" :key="mensaje.id">
             <td>{{ mensaje.fecha }}</td>

@@ -23,7 +23,7 @@
         </thead>
         <tbody>
           <tr v-if="filteredEstaciones.length === 0">
-            <td colspan="6" class="text-center">Sin registros</td>
+            <td colspan="6" class="text-center">Sin registros de Estación de Metro</td>
           </tr>
           <tr v-for="estacion in filteredEstaciones" :key="estacion.id">
             <td>{{ estacion.date }}</td>
