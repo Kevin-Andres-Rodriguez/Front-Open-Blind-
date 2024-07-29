@@ -25,16 +25,16 @@
           <tr v-if="filteredRutas.length === 0">
             <td colspan="6" class="text-center">Sin registros de Rutas</td>
           </tr>
-          <tr v-for="ruta in filteredRutas" :key="ruta.id">
-            <td>{{ ruta.date }}</td>
-            <td>{{ ruta.nombre_ruta }}</td>
-            <td>{{ ruta.descripcion_ruta }}</td>
-            <td>{{ ruta.ubicacion_ruta }}</td>
-            <td class="status">{{ ruta.estado_ruta }}</td>
+          <tr v-for="ruta in filteredRutas" :key="ruta.rutaId">
+            <td>{{ ruta.createRuta }}</td>
+            <td>{{ ruta.nombreRuta }}</td>
+            <td>{{ ruta.descripcionRuta }}</td>
+            <td>{{ ruta.ubicacionRuta }}</td>
+            <td class="status">{{ ruta.estadoRuta ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', ruta)"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick(ruta.id)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(ruta.rutaId)"></i>
             </td>
           </tr>
         </tbody>
@@ -56,20 +56,20 @@
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
             <label for="nombre_ruta" class="form-label">Nombre de la ruta <span class="required">*</span>:</label>
-            <input type="text" id="nombre_ruta" v-model="form.nombre_ruta" class="form-control" required>
+            <input type="text" id="nombre_ruta" v-model="form.nombreRuta" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="descripcion_ruta" class="form-label">Descripción <span class="required">*</span>:</label>
-            <input type="text" id="descripcion_ruta" v-model="form.descripcion_ruta" class="form-control" required>
+            <input type="text" id="descripcion_ruta" v-model="form.descripcionRuta" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="ubicacion_ruta" class="form-label">Ubicación <span class="required">*</span>:</label>
-            <input type="text" id="ubicacion_ruta" v-model="form.ubicacion_ruta" class="form-control" required>
+            <input type="text" id="ubicacion_ruta" v-model="form.ubicacionRuta" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="estado_ruta" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_ruta">
+              <input type="checkbox" v-model="form.estadoRuta">
               <span class="slider round"></span>
             </label>
           </div>
@@ -82,67 +82,75 @@
   </div>
 </template>
 
+
 <script>
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios'; // Aquí está el import correcto
 
 export default {
-  name: 'RutaView',
+  name: 'RutasView',
   components: {
     Navegation,
     Nav
   },
   data() {
     return {
+      rutas: [],
       searchQuery: '',
-      form: {
-        id: null,
-        nombre_ruta: '',
-        descripcion_ruta: '',
-        ubicacion_ruta: '',
-        estado_ruta: false
-      },
-      rutas: [
-        { id: 1, date: '12 Jan 2022', nombre_ruta: 'Entrada Estación Quitumbe', descripcion_ruta: '15 gradas hacia abajo', ubicacion_ruta: 'Terminal Quitumbe', estado_ruta: 'Activo' },
-        { id: 2, date: '15 Feb 2022', nombre_ruta: 'Salida Estación Quitumbe', descripcion_ruta: '20 gradas hacia arriba', ubicacion_ruta: 'Terminal Quitumbe', estado_ruta: 'Inactivo' },
-        // Añade más rutas aquí según sea necesario
-      ],
       isOffCanvasOpen: false,
-      offCanvasTitle: ''
+      offCanvasTitle: '',
+      form: {
+        rutaId: null,
+        nombreRuta: '',
+        descripcionRuta: '',
+        ubicacionRuta: '',
+        estadoRuta: true
+      }
     };
   },
   computed: {
     filteredRutas() {
+      if (!this.searchQuery) {
+        return this.rutas;
+      }
       const query = this.searchQuery.trim().toLowerCase();
       return this.rutas.filter(ruta => 
-        ruta.nombre_ruta.toLowerCase().includes(query)
+        ruta.nombreRuta.toLowerCase().includes(query)
       );
     }
   },
   methods: {
-    openOffCanvas(action, ruta = null) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Ruta' : 'Editar Ruta';
-      if (action === 'edit' && ruta) {
-        this.form = { ...ruta }; // Clonamos el objeto para evitar modificaciones directas
-      } else {
-        this.form = {
-          id: null,
-          nombre_ruta: '',
-          descripcion_ruta: '',
-          ubicacion_ruta: '',
-          estado_ruta: false
-        };
+    async fetchRutas() {
+      try {
+        const response = await axios.get('http://localhost:4200/ruta');
+        this.rutas = response.data;
+      } catch (error) {
+        console.error('Error al obtener las rutas:', error);
       }
-      this.isOffCanvasOpen = true;
+    },
+    openOffCanvas(action, ruta = null) {
+      if (action === 'edit') {
+        this.offCanvasTitle = 'Editar Ruta';
+        this.form = { ...ruta };
+        this.isOffCanvasOpen = true;
+      } else if (action === 'add') {
+        this.offCanvasTitle = 'Agregar Ruta';
+        this.form = {
+          rutaId: null,
+          nombreRuta: '',
+          descripcionRuta: '',
+          ubicacionRuta: '',
+          estadoRuta: true
+        };
+        this.isOffCanvasOpen = true;
+      }
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    redirectToForm() {
-      this.$router.push('/create/Ruta');
-    },
-    handleDeleteClick(id) {
+    async handleDeleteClick(rutaId) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -151,46 +159,47 @@ export default {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, bórralo!'
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          this.rutas = this.rutas.filter(ruta => ruta.id !== id);
-          Swal.fire(
-            '¡Borrado!',
-            'La ruta ha sido borrada.',
-            'success'
-          );
+          try {
+            await axios.delete(`http://localhost:4200/ruta/${rutaId}`);
+            this.rutas = this.rutas.filter(ruta => ruta.rutaId !== rutaId);
+            Swal.fire('¡Borrado!', 'La ruta ha sido borrada.', 'success');
+          } catch (error) {
+            Swal.fire('Error', 'Hubo un error al borrar la ruta.', 'error');
+            console.error('Error al borrar la ruta:', error);
+          }
         }
       });
     },
-    submitForm() {
-      // Validar campos vacíos
-      if (!this.form.nombre_ruta || !this.form.descripcion_ruta || !this.form.ubicacion_ruta) {
-        Swal.fire({
-          title: 'Campos vacíos',
-          text: 'Por favor, completa todos los campos.',
-          icon: 'warning'
-        });
-        return;
-      }
-
-      if (this.form.id === null) {
-        // Añadir una nueva ruta
-        const newId = this.rutas.length ? Math.max(...this.rutas.map(e => e.id)) + 1 : 1;
-        this.rutas.push({ ...this.form, id: newId, estado_ruta: this.form.estado_ruta ? 'Activo' : 'Inactivo' });
-        Swal.fire('¡Agregado!', 'La ruta ha sido agregada.', 'success');
-      } else {
-        // Actualizar una ruta existente
-        const index = this.rutas.findIndex(e => e.id === this.form.id);
-        if (index !== -1) {
-          this.rutas[index] = { ...this.form, estado_ruta: this.form.estado_ruta ? 'Activo' : 'Inactivo' };
-          Swal.fire('¡Actualizado!', 'La ruta ha sido actualizada.', 'success');
+    async submitForm() {
+      try {
+        if (this.form.rutaId) {
+          // Actualizar una ruta existente
+          await axios.put(`http://localhost:4200/ruta/${this.form.rutaId}`, this.form);
+          const index = this.rutas.findIndex(r => r.rutaId === this.form.rutaId);
+          if (index !== -1) {
+            this.rutas[index] = { ...this.form };
+            Swal.fire('¡Actualizado!', 'La ruta ha sido actualizada.', 'success');
+          }
+        } else {
+          // Crear una nueva ruta
+          const response = await axios.post('http://localhost:4200/ruta', this.form);
+          this.rutas.push(response.data);
+          Swal.fire('¡Creada!', 'La ruta ha sido creada.', 'success');
         }
+        this.closeOffCanvas();
+      } catch (error) {
+        Swal.fire('Error', 'Hubo un error al guardar la ruta.', 'error');
+        console.error('Error al guardar la ruta:', error);
       }
-
-      this.closeOffCanvas();
     }
+  },
+  mounted() {
+    this.fetchRutas();
   }
 };
 </script>
+
 
 <style scoped src="@/assets/styles/ruta/rutaView.css"></style>

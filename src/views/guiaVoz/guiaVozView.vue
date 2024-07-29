@@ -13,26 +13,26 @@
       <table>
         <thead>
           <tr>
-            <th><i class="fas fa-calendar-alt"></i> Date</th>
+            <th><i class="fas fa-calendar-alt"></i> Fecha</th>
             <th><i class="fas fa-info-circle"></i> Descripción</th>
-            <th><i class="fas fa-volume-up"></i> Audio URL</th>
+            <th><i class="fas fa-volume-up"></i> URL de Audio</th>
             <th><i class="fas fa-circle text-danger"></i> Estado</th>
             <th><i class="fas fa-cogs"></i> Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-if="filteredItems.length === 0">
-            <td colspan="5" class="text-center">Sin registros de Guia de Voz</td>
+            <td colspan="5" class="text-center">Sin registros de Guía de Voz</td>
           </tr>
-          <tr v-for="item in filteredItems" :key="item.id">
-            <td>{{ item.date }}</td>
-            <td>{{ item.description }}</td>
-            <td>{{ item.audioUrl }}</td>
-            <td class="status">{{ item.status }}</td>
+          <tr v-for="item in filteredItems" :key="item.guiaVozId">
+            <td>{{ formatDate(item.createGuiaVoz) }}</td>
+            <td>{{ item.descripcionGuiaVoz }}</td>
+            <td>{{ item.audioUrlGuiaVoz }}</td>
+            <td class="status">{{ item.estadoGuiaVoz ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', item)"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick(item.id)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(item.guiaVozId)"></i>
             </td>
           </tr>
         </tbody>
@@ -53,21 +53,17 @@
       <div class="off-canvas-body">
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
-            <label for="date" class="form-label">Date <span class="required">*</span>:</label>
-            <input type="date" id="date" v-model="form.date" class="form-control" required>
-          </div>
-          <div class="form-group">
             <label for="description" class="form-label">Descripción <span class="required">*</span>:</label>
-            <input type="text" id="description" v-model="form.description" class="form-control" required>
+            <input type="text" id="description" v-model="form.descripcionGuiaVoz" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="audioUrl" class="form-label">Audio URL <span class="required">*</span>:</label>
-            <input type="url" id="audioUrl" v-model="form.audioUrl" class="form-control" required>
+            <label for="audioUrl" class="form-label">URL de Audio <span class="required">*</span>:</label>
+            <input type="url" id="audioUrl" v-model="form.audioUrlGuiaVoz" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="status" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.status">
+              <input type="checkbox" v-model="form.estadoGuiaVoz">
               <span class="slider round"></span>
             </label>
           </div>
@@ -84,6 +80,7 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
   name: 'GuiaVozView',
@@ -93,56 +90,52 @@ export default {
   },
   data() {
     return {
+      items: [],
       searchQuery: '',
-      form: {
-        id: null,
-        date: '',
-        description: '',
-        audioUrl: '',
-        status: false
-      },
-      items: [
-        { id: 1, date: '12 Jan 2022', description: 'Ingreso al Metro', audioUrl: 'https://www.youtube.com/', status: 'Activo' },
-        { id: 2, date: '15 Feb 2022', description: 'Información adicional', audioUrl: 'https://www.example.com/', status: 'Inactivo' },
-        // Añade más datos de items aquí
-      ],
       isOffCanvasOpen: false,
-      offCanvasTitle: ''
+      offCanvasTitle: '',
+      form: {
+        guiaVozId: null,
+        descripcionGuiaVoz: '',
+        audioUrlGuiaVoz: '',
+        idiomaGuiaVoz: '',
+        estadoGuiaVoz: true,
+        createGuiaVoz: '',
+        updateGuiaVoz: ''
+      }
     };
   },
   computed: {
     filteredItems() {
-      const query = this.searchQuery.toLowerCase();
-      return this.items.filter(item => 
-        item.date.toLowerCase().includes(query) || 
-        item.description.toLowerCase().includes(query) || 
-        item.audioUrl.toLowerCase().includes(query)
+      if (!this.searchQuery) {
+        return this.items;
+      }
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.items.filter(item =>
+        item.descripcionGuiaVoz.toLowerCase().includes(query)
       );
     }
   },
   methods: {
-    openOffCanvas(action, item = null) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Guía de Voz' : 'Editar Guía de Voz';
-      if (action === 'edit' && item) {
-        this.form = { ...item }; // Clonamos el objeto para evitar modificaciones directas
-      } else {
-        this.form = {
-          id: null,
-          date: '',
-          description: '',
-          audioUrl: '',
-          status: false
-        };
+    async fetchItems() {
+      try {
+        const response = await axios.get('http://localhost:4200/guiaVoz');
+        this.items = response.data;
+      } catch (error) {
+        console.error('Error al obtener los ítems:', error);
       }
-      this.isOffCanvasOpen = true;
+    },
+    openOffCanvas(action, item = null) {
+      if (action === 'edit') {
+        this.offCanvasTitle = 'Editar Guía de Voz';
+        this.form = { ...item };
+        this.isOffCanvasOpen = true;
+      }
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    redirectToForm() {
-      this.$router.push('/create/GuiaVoz');
-    },
-    handleDeleteClick(id) {
+    async handleDeleteClick(guiaVozId) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -151,48 +144,54 @@ export default {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, bórralo!'
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          this.items = this.items.filter(item => item.id !== id);
-          Swal.fire(
-            '¡Borrado!',
-            'La guía de voz ha sido borrada.',
-            'success'
-          );
+          try {
+            await axios.delete(`http://localhost:4200/guiaVoz/${guiaVozId}`);
+            this.items = this.items.filter(item => item.guiaVozId !== guiaVozId);
+            Swal.fire('¡Borrado!', 'La guía de voz ha sido borrada.', 'success');
+          } catch (error) {
+            Swal.fire('Error', 'Hubo un error al borrar la guía de voz.', 'error');
+            console.error('Error al borrar la guía de voz:', error);
+          }
         }
       });
     },
-    submitForm() {
-      // Validar campos vacíos
-      if (!this.form.date || !this.form.description || !this.form.audioUrl) {
-        Swal.fire({
-          title: 'Campos vacíos',
-          text: 'Por favor, completa todos los campos.',
-          icon: 'warning'
-        });
-        return;
-      }
-
-      if (this.form.id === null) {
-        // Adding a new item
-        const newId = this.items.length ? Math.max(...this.items.map(e => e.id)) + 1 : 1;
-        this.items.push({ ...this.form, id: newId, status: this.form.status ? 'Activo' : 'Inactivo' });
-        Swal.fire('¡Agregado!', 'La guía de voz ha sido agregada.', 'success');
-      } else {
-        // Updating an existing item
-        const index = this.items.findIndex(e => e.id === this.form.id);
-        if (index !== -1) {
-          this.items[index] = { ...this.form, status: this.form.status ? 'Activo' : 'Inactivo' };
-          Swal.fire('¡Actualizado!', 'La guía de voz ha sido actualizada.', 'success');
+    async submitForm() {
+      try {
+        if (this.form.guiaVozId) {
+          // Actualizar una guía de voz existente
+          await axios.put(`http://localhost:4200/guiaVoz/${this.form.guiaVozId}`, this.form);
+          const index = this.items.findIndex(e => e.guiaVozId === this.form.guiaVozId);
+          if (index !== -1) {
+            this.items[index] = { ...this.form };
+            Swal.fire('¡Actualizado!', 'La guía de voz ha sido actualizada.', 'success');
+          }
+        } else {
+          // Crear una nueva guía de voz
+          await axios.post('http://localhost:4200/guiaVoz', this.form);
+          this.items.push({ ...this.form, guiaVozId: Date.now() }); // Mock new ID
+          Swal.fire('¡Creado!', 'La guía de voz ha sido creada.', 'success');
         }
+        this.closeOffCanvas();
+      } catch (error) {
+        Swal.fire('Error', 'Hubo un error al guardar la guía de voz.', 'error');
+        console.error('Error al guardar la guía de voz:', error);
       }
-
-      this.closeOffCanvas();
+    },
+    formatDate(date) {
+      const d = new Date(date);
+      return d.toLocaleDateString();
+    },
+    redirectToForm() {
+      // Implement your redirection logic here
     }
+  },
+  mounted() {
+    this.fetchItems();
   }
 };
 </script>
-
 
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>

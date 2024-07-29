@@ -13,8 +13,8 @@
       <table>
         <thead>
           <tr>
-            <th><i class="fas fa-calendar-alt"></i> Date</th>
-            <th><i class="fas fa-user"></i> Nombres</th>
+            <th><i class="fas fa-calendar-alt"></i> Fecha</th>
+            <th><i class="fas fa-user"></i> Nombre</th>
             <th><i class="fas fa-info-circle"></i> Descripción</th>
             <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
             <th><i class="fas fa-circle text-danger"></i> Estado</th>
@@ -25,16 +25,16 @@
           <tr v-if="filteredPuntos.length === 0">
             <td colspan="6" class="text-center">Sin registros de Punto de Interés</td>
           </tr>
-          <tr v-for="punto in filteredPuntos" :key="punto.id">
-            <td>{{ punto.fecha }}</td>
-            <td>{{ punto.nombres }}</td>
-            <td>{{ punto.descripcion }}</td>
-            <td>{{ punto.ubicacion }}</td>
-            <td class="status">{{ punto.estado_usuario }}</td>
+          <tr v-for="punto in filteredPuntos" :key="punto.puntointeresId">
+            <td>{{ punto.createPunto }}</td>
+            <td>{{ punto.nombrePunto }}</td>
+            <td>{{ punto.descripcionPunto }}</td>
+            <td>{{ punto.ubicacionPunto }}</td>
+            <td class="status">{{ punto.estadoPunto ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', punto)"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.id)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.puntointeresId)"></i>
             </td>
           </tr>
         </tbody>
@@ -55,25 +55,21 @@
       <div class="off-canvas-body">
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
-            <label for="fecha" class="form-label">Date <span class="required">*</span>:</label>
-            <input type="date" id="fecha" v-model="form.fecha" class="form-control" required>
+            <label for="nombre_punto" class="form-label">Nombre <span class="required">*</span>:</label>
+            <input type="text" id="nombre_punto" v-model="form.nombrePunto" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="nombres" class="form-label">Nombres <span class="required">*</span>:</label>
-            <input type="text" id="nombres" v-model="form.nombres" class="form-control" required>
+            <label for="descripcion_punto" class="form-label">Descripción <span class="required">*</span>:</label>
+            <input type="text" id="descripcion_punto" v-model="form.descripcionPunto" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="descripcion" class="form-label">Descripción <span class="required">*</span>:</label>
-            <input type="text" id="descripcion" v-model="form.descripcion" class="form-control" required>
+            <label for="ubicacion_punto" class="form-label">Ubicación <span class="required">*</span>:</label>
+            <input type="text" id="ubicacion_punto" v-model="form.ubicacionPunto" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="ubicacion" class="form-label">Ubicación <span class="required">*</span>:</label>
-            <input type="text" id="ubicacion" v-model="form.ubicacion" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
+            <label for="estado_punto" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_usuario">
+              <input type="checkbox" v-model="form.estadoPunto">
               <span class="slider round"></span>
             </label>
           </div>
@@ -90,6 +86,7 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
   name: 'PuntoInteresView',
@@ -99,55 +96,62 @@ export default {
   },
   data() {
     return {
+      puntos: [],
       searchQuery: '',
-      form: {
-        id: null,
-        fecha: '',
-        nombres: '',
-        descripcion: '',
-        ubicacion: '',
-        estado_usuario: false
-      },
-      puntos: [
-        { id: 1, fecha: '12 Jan 2022', nombres: 'Taquillera 1 El recreo', descripcion: 'Pago Boleteria', ubicacion: 'Sur de Quito', estado_usuario: 'Activo' },
-        { id: 2, fecha: '15 Feb 2022', nombres: 'Taquillera 2 El recreo', descripcion: 'Venta de tickets', ubicacion: 'Norte de Quito', estado_usuario: 'Inactivo' },
-      ],
       isOffCanvasOpen: false,
-      offCanvasTitle: ''
+      offCanvasTitle: '',
+      form: {
+        puntointeresId: null,
+        nombrePunto: '',
+        descripcionPunto: '',
+        ubicacionPunto: '',
+        estadoPunto: true,
+        createPunto: ''
+      }
     };
   },
   computed: {
     filteredPuntos() {
+      if (!this.searchQuery) {
+        return this.puntos;
+      }
       const query = this.searchQuery.trim().toLowerCase();
       return this.puntos.filter(punto => 
-        punto.nombres.toLowerCase().includes(query)
+        punto.nombrePunto.toLowerCase().includes(query)
       );
     }
   },
   methods: {
-    openOffCanvas(action, punto = null) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Punto de Interés' : 'Editar Punto de Interés';
-      if (action === 'edit' && punto) {
-        this.form = { ...punto }; 
-      } else {
-        this.form = {
-          id: null,
-          fecha: '',
-          nombres: '',
-          descripcion: '',
-          ubicacion: '',
-          estado_usuario: false
-        };
+    async fetchPuntos() {
+      try {
+        const response = await axios.get('http://localhost:4200/puntoInteres');
+        this.puntos = response.data;
+      } catch (error) {
+        console.error('Error al obtener los puntos de interés:', error);
       }
-      this.isOffCanvasOpen = true;
+    },
+    openOffCanvas(action, punto = null) {
+      if (action === 'edit') {
+        this.offCanvasTitle = 'Editar Punto de Interés';
+        this.form = { ...punto };
+        this.isOffCanvasOpen = true;
+      } else if (action === 'add') {
+        this.offCanvasTitle = 'Agregar Punto de Interés';
+        this.form = {
+          puntointeresId: null,
+          nombrePunto: '',
+          descripcionPunto: '',
+          ubicacionPunto: '',
+          estadoPunto: true,
+          createPunto: ''
+        };
+        this.isOffCanvasOpen = true;
+      }
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    redirectToForm() {
-      this.$router.push('/create/PuntoInteres');
-    },
-    handleDeleteClick(id) {
+    async handleDeleteClick(puntointeresId) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -156,44 +160,44 @@ export default {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, bórralo!'
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          this.puntos = this.puntos.filter(punto => punto.id !== id);
-          Swal.fire(
-            '¡Borrado!',
-            'El punto de interés ha sido borrado.',
-            'success'
-          );
+          try {
+            await axios.delete(`http://localhost:4200/puntoInteres/${puntointeresId}`);
+            this.puntos = this.puntos.filter(punto => punto.puntointeresId !== puntointeresId);
+            Swal.fire('¡Borrado!', 'El punto de interés ha sido borrado.', 'success');
+          } catch (error) {
+            Swal.fire('Error', 'Hubo un error al borrar el punto de interés.', 'error');
+            console.error('Error al borrar el punto de interés:', error);
+          }
         }
       });
     },
-    submitForm() {
-      // Validar campos vacíos
-      if (!this.form.fecha || !this.form.nombres || !this.form.descripcion || !this.form.ubicacion) {
-        Swal.fire({
-          title: 'Campos vacíos',
-          text: 'Por favor, completa todos los campos.',
-          icon: 'warning'
-        });
-        return;
-      }
-
-      if (this.form.id === null) {
-        // Adding a new point of interest
-        const newId = this.puntos.length ? Math.max(...this.puntos.map(e => e.id)) + 1 : 1;
-        this.puntos.push({ ...this.form, id: newId, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' });
-        Swal.fire('¡Agregado!', 'El punto de interés ha sido agregado.', 'success');
-      } else {
-        // Updating an existing point of interest
-        const index = this.puntos.findIndex(e => e.id === this.form.id);
-        if (index !== -1) {
-          this.puntos[index] = { ...this.form, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' };
-          Swal.fire('¡Actualizado!', 'El punto de interés ha sido actualizado.', 'success');
+    async submitForm() {
+      try {
+        if (this.form.puntointeresId) {
+          // Actualizar un punto existente
+          await axios.put(`http://localhost:4200/puntoInteres/${this.form.puntointeresId}`, this.form);
+          const index = this.puntos.findIndex(p => p.puntointeresId === this.form.puntointeresId);
+          if (index !== -1) {
+            this.puntos[index] = { ...this.form };
+            Swal.fire('¡Actualizado!', 'El punto de interés ha sido actualizado.', 'success');
+          }
+        } else {
+          // Agregar un nuevo punto de interés
+          await axios.post('http://localhost:4200/puntoInteres', this.form);
+          this.puntos.push({ ...this.form, puntointeresId: Date.now() }); // Suponiendo que el ID se genera en el backend
+          Swal.fire('¡Agregado!', 'El punto de interés ha sido agregado.', 'success');
         }
+        this.closeOffCanvas();
+      } catch (error) {
+        Swal.fire('Error', 'Hubo un error al guardar el punto de interés.', 'error');
+        console.error('Error al guardar el punto de interés:', error);
       }
-
-      this.closeOffCanvas();
     }
+  },
+  mounted() {
+    this.fetchPuntos();
   }
 };
 </script>

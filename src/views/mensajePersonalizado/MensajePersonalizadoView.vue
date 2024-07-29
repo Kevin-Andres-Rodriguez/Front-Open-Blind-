@@ -24,15 +24,15 @@
           <tr v-if="filteredMensajes.length === 0">
             <td colspan="5" class="text-center">Sin registros de Mensajes Personalizados</td>
           </tr>
-          <tr v-for="mensaje in filteredMensajes" :key="mensaje.id">
-            <td>{{ mensaje.fecha }}</td>
+          <tr v-for="mensaje in filteredMensajes" :key="mensaje.mensajeId">
+            <td>{{ mensaje.createMensaje }}</td>
             <td>{{ mensaje.mensaje }}</td>
-            <td>{{ mensaje.contacto }}</td>
-            <td class="status">{{ mensaje.estado_usuario }}</td>
+            <td>{{ mensaje.contactoMensaje }}</td>
+            <td class="status">{{ mensaje.estadoMensaje ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', mensaje)"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick(mensaje.id)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(mensaje.mensajeId)"></i>
             </td>
           </tr>
         </tbody>
@@ -53,21 +53,17 @@
       <div class="off-canvas-body">
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
-            <label for="fecha" class="form-label">Date <span class="required">*</span>:</label>
-            <input type="date" id="fecha" v-model="form.fecha" class="form-control" required>
-          </div>
-          <div class="form-group">
             <label for="mensaje" class="form-label">Mensaje <span class="required">*</span>:</label>
             <input type="text" id="mensaje" v-model="form.mensaje" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="contacto" class="form-label">Contacto <span class="required">*</span>:</label>
-            <input type="text" id="contacto" v-model="form.contacto" class="form-control" required>
+            <input type="text" id="contacto" v-model="form.contactoMensaje" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_usuario">
+              <input type="checkbox" v-model="form.estadoMensaje">
               <span class="slider round"></span>
             </label>
           </div>
@@ -84,6 +80,7 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
   name: 'MensajePersonalizadoView',
@@ -93,25 +90,24 @@ export default {
   },
   data() {
     return {
+      mensajes: [],
       searchQuery: '',
-      form: {
-        id: null,
-        fecha: '',
-        mensaje: '',
-        contacto: '',
-        estado_usuario: false
-      },
-      mensajes: [
-        { id: 1, fecha: '12 Jan 2022', mensaje: 'Perdí completamente la vista', contacto: '0988754236', estado_usuario: 'Activo' },
-        { id: 2, fecha: '15 Feb 2022', mensaje: 'Necesito ayuda con mi cuenta', contacto: '0998765432', estado_usuario: 'Inactivo' },
-        // Añade más mensajes personalizados aquí según sea necesario
-      ],
       isOffCanvasOpen: false,
-      offCanvasTitle: ''
+      offCanvasTitle: '',
+      form: {
+        mensajeId: null,
+        mensaje: '',
+        contactoMensaje: '',
+        estadoMensaje: true,
+        createMensaje: ''
+      }
     };
   },
   computed: {
     filteredMensajes() {
+      if (!this.searchQuery) {
+        return this.mensajes;
+      }
       const query = this.searchQuery.trim().toLowerCase();
       return this.mensajes.filter(mensaje => 
         mensaje.mensaje.toLowerCase().includes(query)
@@ -119,28 +115,35 @@ export default {
     }
   },
   methods: {
-    openOffCanvas(action, mensaje = null) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Mensaje Personalizado' : 'Editar Mensaje Personalizado';
-      if (action === 'edit' && mensaje) {
-        this.form = { ...mensaje }; // Clonamos el objeto para evitar modificaciones directas
-      } else {
-        this.form = {
-          id: null,
-          fecha: '',
-          mensaje: '',
-          contacto: '',
-          estado_usuario: false
-        };
+    async fetchMensajes() {
+      try {
+        const response = await axios.get('http://localhost:4200/mensajePersonalizado');
+        this.mensajes = response.data;
+      } catch (error) {
+        console.error('Error al obtener los mensajes:', error);
       }
-      this.isOffCanvasOpen = true;
+    },
+    openOffCanvas(action, mensaje = null) {
+      if (action === 'edit') {
+        this.offCanvasTitle = 'Editar Mensaje';
+        this.form = { ...mensaje };
+        this.isOffCanvasOpen = true;
+      } else if (action === 'add') {
+        this.offCanvasTitle = 'Agregar Mensaje';
+        this.form = {
+          mensajeId: null,
+          mensaje: '',
+          contactoMensaje: '',
+          estadoMensaje: true,
+          createMensaje: ''
+        };
+        this.isOffCanvasOpen = true;
+      }
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    redirectToForm() {
-      this.$router.push('/create/MensajePersonalizado');
-    },
-    handleDeleteClick(id) {
+    async handleDeleteClick(mensajeId) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -149,47 +152,48 @@ export default {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, bórralo!'
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          this.mensajes = this.mensajes.filter(mensaje => mensaje.id !== id);
-          Swal.fire(
-            '¡Borrado!',
-            'El mensaje ha sido borrado.',
-            'success'
-          );
+          try {
+            await axios.delete(`http://localhost:4200/mensajePersonalizado/${mensajeId}`);
+            this.mensajes = this.mensajes.filter(mensaje => mensaje.mensajeId !== mensajeId);
+            Swal.fire('¡Borrado!', 'El mensaje ha sido borrado.', 'success');
+          } catch (error) {
+            Swal.fire('Error', 'Hubo un error al borrar el mensaje.', 'error');
+            console.error('Error al borrar el mensaje:', error);
+          }
         }
       });
     },
-    submitForm() {
-      // Validar campos vacíos
-      if (!this.form.fecha || !this.form.mensaje || !this.form.contacto) {
-        Swal.fire({
-          title: 'Campos vacíos',
-          text: 'Por favor, completa todos los campos.',
-          icon: 'warning'
-        });
-        return;
-      }
-
-      if (this.form.id === null) {
-        // Adding a new message
-        const newId = this.mensajes.length ? Math.max(...this.mensajes.map(e => e.id)) + 1 : 1;
-        this.mensajes.push({ ...this.form, id: newId, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' });
-        Swal.fire('¡Agregado!', 'El mensaje ha sido agregado.', 'success');
-      } else {
-        // Updating an existing message
-        const index = this.mensajes.findIndex(e => e.id === this.form.id);
-        if (index !== -1) {
-          this.mensajes[index] = { ...this.form, estado_usuario: this.form.estado_usuario ? 'Activo' : 'Inactivo' };
-          Swal.fire('¡Actualizado!', 'El mensaje ha sido actualizado.', 'success');
+    async submitForm() {
+      try {
+        if (this.form.mensajeId) {
+          // Actualizar un mensaje existente
+          await axios.put(`http://localhost:4200/mensajePersonalizado/${this.form.mensajeId}`, this.form);
+          const index = this.mensajes.findIndex(m => m.mensajeId === this.form.mensajeId);
+          if (index !== -1) {
+            this.mensajes[index] = { ...this.form };
+            Swal.fire('¡Actualizado!', 'El mensaje ha sido actualizado.', 'success');
+          }
+        } else {
+          // Agregar un nuevo mensaje
+          const response = await axios.post('http://localhost:4200/mensajePersonalizado', this.form);
+          this.mensajes.push(response.data);
+          Swal.fire('¡Agregado!', 'El mensaje ha sido agregado.', 'success');
         }
+        this.closeOffCanvas();
+      } catch (error) {
+        Swal.fire('Error', 'Hubo un error al guardar el mensaje.', 'error');
+        console.error('Error al guardar el mensaje:', error);
       }
-
-      this.closeOffCanvas();
     }
+  },
+  mounted() {
+    this.fetchMensajes();
   }
 };
 </script>
+
 
 
 
