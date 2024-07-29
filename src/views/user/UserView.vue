@@ -34,9 +34,10 @@
             <td>{{ user.correo }}</td>
             <td>{{ user.telefono }}</td>
             <td>{{ user.fechaNacimiento }}</td>
-            <td class="status">{{ user.estado }}</td>
+            <td :class="{'status-active': user.estado === 'Activo', 'status-inactive': user.estado === 'Inactivo'}">
+              {{ user.estado }}
+            </td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', user)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(user.id)"></i>
             </td>
@@ -45,6 +46,7 @@
       </table>
       <div class="pagination">
         <p>{{ filteredUsers.length }} resultados encontrados: Mostrando página 1 de 100</p>
+        <button class="add-btn" @click="redirectToCreateUsuario">Agregar</button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -121,13 +123,7 @@ export default {
       searchQuery: '',
       users: [
         { id: 1, date: '12 Jan 2022', nombre: 'Juan', apellido: 'Andrade', correo: 'juandandrade@gmail.com', telefono: '0987475123', fechaNacimiento: '2002-04-14', estado: 'Activo' },
-        { id: 2, date: '15 Feb 2022', nombre: 'Maria', apellido: 'Gomez', correo: 'maria.gomez@gmail.com', telefono: '0987654321', fechaNacimiento: '1995-08-22', estado: 'Inactivo' },
-        { id: 3, date: '20 Mar 2022', nombre: 'Carlos', apellido: 'Perez', correo: 'carlos.perez@gmail.com', telefono: '0981234567', fechaNacimiento: '1988-12-30', estado: 'Activo' },
-        { id: 4, date: '25 Apr 2022', nombre: 'Ana', apellido: 'Martinez', correo: 'ana.martinez@gmail.com', telefono: '0988765432', fechaNacimiento: '1999-05-10', estado: 'Inactivo' },
-        { id: 5, date: '30 May 2022', nombre: 'Luis', apellido: 'Rodriguez', correo: 'luis.rodriguez@gmail.com', telefono: '0981112233', fechaNacimiento: '1975-11-02', estado: 'Activo' },
-        { id: 6, date: '10 Jun 2022', nombre: 'Elena', apellido: 'Fernandez', correo: 'elena.fernandez@gmail.com', telefono: '0983334455', fechaNacimiento: '1985-03-16', estado: 'Inactivo' },
-        { id: 7, date: '15 Jul 2022', nombre: 'Pablo', apellido: 'Lopez', correo: 'pablo.lopez@gmail.com', telefono: '0985556677', fechaNacimiento: '1990-09-05', estado: 'Activo' },
-        { id: 8, date: '20 Aug 2022', nombre: 'Lucia', apellido: 'Ramirez', correo: 'lucia.ramirez@gmail.com', telefono: '0989990001', fechaNacimiento: '2000-01-20', estado: 'Inactivo' }
+        { id: 2, date: '15 Feb 2022', nombre: 'Maria', apellido: 'Gomez', correo: 'maria.gomez@gmail.com', telefono: '0987654321', fechaNacimiento: '1995-08-22', estado: 'Inactivo' }
       ]
     };
   },
@@ -169,9 +165,6 @@ export default {
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
-    },
-    redirectToForm() {
-      this.$router.push('/register');
     },
     handleDeleteClick(userId) {
       Swal.fire({
@@ -234,11 +227,12 @@ export default {
       });
 
       this.closeOffCanvas();
+    },
+    redirectToCreateUsuario() {
+      this.$router.push('/register');
     }
   }
 };
 </script>
-
-
 
 <style scoped src="@/assets/styles/User/UserView.css"></style>

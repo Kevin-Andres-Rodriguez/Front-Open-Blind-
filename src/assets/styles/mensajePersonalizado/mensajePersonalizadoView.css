@@ -116,14 +116,32 @@
     background-color: #f1f1f1;
   }
   
+  .add-btn:hover{
+    background-color:  #007bff;
+    color:  #f1f1f1;
+  }
+  
   .actions i {
-    margin-right: 10px;
+    margin-left: 20px;
+    cursor: pointer;
+
+  }
+  .actions .fa-edit {
     cursor: pointer;
   }
   
-  .actions i:hover {
-    color: #007bff;
+  .actions .fa-edit:hover {
+    color: rgb(0, 153, 0);
   }
+  
+  .actions .fa-trash-alt {
+    cursor: pointer;
+  }
+  
+  .actions .fa-trash-alt:hover {
+    color: rgb(206, 0, 0);
+  }
+
   
   .pagination {
     display: flex;

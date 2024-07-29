@@ -30,7 +30,9 @@
             <td>{{ estacion.nombreEstacion }}</td>
             <td>{{ estacion.descripcionEstacion }}</td>
             <td>{{ estacion.ubicacionEstacion }}</td>
-            <td class="status">{{ estacion.estadoEstacion ? 'Activo' : 'Inactivo' }}</td>
+            <td :class="{'status-active': estacion.estadoEstacion, 'status-inactive': !estacion.estadoEstacion}">
+              {{ estacion.estadoEstacion ? 'Activo' : 'Inactivo' }}
+            </td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', estacion)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.estacionId)"></i>
@@ -40,6 +42,7 @@
       </table>
       <div class="pagination">
         <p>{{ filteredEstaciones.length }} resultados encontrados</p>
+        <button class="add-btn" @click="redirectToCreateEstacion">Agregar</button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -162,7 +165,6 @@ export default {
     },
     async submitForm() {
       try {
-        // Actualizar una estación existente
         await axios.put(`http://localhost:4200/estacion/${this.form.estacionId}`, this.form);
         const index = this.estaciones.findIndex(e => e.estacionId === this.form.estacionId);
         if (index !== -1) {
@@ -174,6 +176,9 @@ export default {
         Swal.fire('Error', 'Hubo un error al actualizar la estación.', 'error');
         console.error('Error al actualizar la estación:', error);
       }
+    },
+    redirectToCreateEstacion() {
+      this.$router.push('/create/EstacionMetro');
     }
   },
   mounted() {

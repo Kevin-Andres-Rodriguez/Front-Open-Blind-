@@ -28,9 +28,10 @@
             <td>{{ mensaje.createMensaje }}</td>
             <td>{{ mensaje.mensaje }}</td>
             <td>{{ mensaje.contactoMensaje }}</td>
-            <td class="status">{{ mensaje.estadoMensaje ? 'Activo' : 'Inactivo' }}</td>
+            <td :class="{'status-active': mensaje.estadoMensaje, 'status-inactive': !mensaje.estadoMensaje}">
+              {{ mensaje.estadoMensaje ? 'Activo' : 'Inactivo' }}
+            </td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', mensaje)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(mensaje.mensajeId)"></i>
             </td>
@@ -39,6 +40,7 @@
       </table>
       <div class="pagination">
         <p>{{ filteredMensajes.length }} resultados encontrados: Mostrando página 1 de 100</p>
+        <button class="add-btn" @click="redirectToCreateMensaje">Agregar</button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -128,16 +130,6 @@ export default {
         this.offCanvasTitle = 'Editar Mensaje';
         this.form = { ...mensaje };
         this.isOffCanvasOpen = true;
-      } else if (action === 'add') {
-        this.offCanvasTitle = 'Agregar Mensaje';
-        this.form = {
-          mensajeId: null,
-          mensaje: '',
-          contactoMensaje: '',
-          estadoMensaje: true,
-          createMensaje: ''
-        };
-        this.isOffCanvasOpen = true;
       }
     },
     closeOffCanvas() {
@@ -175,17 +167,15 @@ export default {
             this.mensajes[index] = { ...this.form };
             Swal.fire('¡Actualizado!', 'El mensaje ha sido actualizado.', 'success');
           }
-        } else {
-          // Agregar un nuevo mensaje
-          const response = await axios.post('http://localhost:4200/mensajePersonalizado', this.form);
-          this.mensajes.push(response.data);
-          Swal.fire('¡Agregado!', 'El mensaje ha sido agregado.', 'success');
         }
         this.closeOffCanvas();
       } catch (error) {
         Swal.fire('Error', 'Hubo un error al guardar el mensaje.', 'error');
         console.error('Error al guardar el mensaje:', error);
       }
+    },
+    redirectToCreateMensaje() {
+      this.$router.push('/create/MensajePersonalizado');
     }
   },
   mounted() {
@@ -193,8 +183,5 @@ export default {
   }
 };
 </script>
-
-
-
 
 <style scoped src="@/assets/styles/mensajePersonalizado/mensajePersonalizadoView.css"></style>

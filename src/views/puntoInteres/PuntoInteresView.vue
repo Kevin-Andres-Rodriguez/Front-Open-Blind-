@@ -30,9 +30,10 @@
             <td>{{ punto.nombrePunto }}</td>
             <td>{{ punto.descripcionPunto }}</td>
             <td>{{ punto.ubicacionPunto }}</td>
-            <td class="status">{{ punto.estadoPunto ? 'Activo' : 'Inactivo' }}</td>
+            <td :class="{'status-active': punto.estadoPunto, 'status-inactive': !punto.estadoPunto}">
+              {{ punto.estadoPunto ? 'Activo' : 'Inactivo' }}
+            </td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', punto)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.puntointeresId)"></i>
             </td>
@@ -41,6 +42,7 @@
       </table>
       <div class="pagination">
         <p>{{ filteredPuntos.length }} resultados encontrados: Mostrando página 1 de 100</p>
+        <button class="add-btn" @click="redirectToCreatePunto">Agregar</button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -107,7 +109,7 @@ export default {
         ubicacionPunto: '',
         estadoPunto: true,
         createPunto: ''
-      }
+      },
     };
   },
   computed: {
@@ -134,17 +136,6 @@ export default {
       if (action === 'edit') {
         this.offCanvasTitle = 'Editar Punto de Interés';
         this.form = { ...punto };
-        this.isOffCanvasOpen = true;
-      } else if (action === 'add') {
-        this.offCanvasTitle = 'Agregar Punto de Interés';
-        this.form = {
-          puntointeresId: null,
-          nombrePunto: '',
-          descripcionPunto: '',
-          ubicacionPunto: '',
-          estadoPunto: true,
-          createPunto: ''
-        };
         this.isOffCanvasOpen = true;
       }
     },
@@ -183,17 +174,15 @@ export default {
             this.puntos[index] = { ...this.form };
             Swal.fire('¡Actualizado!', 'El punto de interés ha sido actualizado.', 'success');
           }
-        } else {
-          // Agregar un nuevo punto de interés
-          await axios.post('http://localhost:4200/puntoInteres', this.form);
-          this.puntos.push({ ...this.form, puntointeresId: Date.now() }); // Suponiendo que el ID se genera en el backend
-          Swal.fire('¡Agregado!', 'El punto de interés ha sido agregado.', 'success');
         }
         this.closeOffCanvas();
       } catch (error) {
         Swal.fire('Error', 'Hubo un error al guardar el punto de interés.', 'error');
         console.error('Error al guardar el punto de interés:', error);
       }
+    },
+    redirectToCreatePunto() {
+      this.$router.push('/create/PuntoInteres');
     }
   },
   mounted() {
@@ -201,9 +190,5 @@ export default {
   }
 };
 </script>
-
-
-
-
 
 <style scoped src="@/assets/styles/puntoInteres/puntoInteresView.css"></style>
