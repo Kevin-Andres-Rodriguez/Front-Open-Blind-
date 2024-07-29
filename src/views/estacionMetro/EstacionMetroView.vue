@@ -25,22 +25,21 @@
           <tr v-if="filteredEstaciones.length === 0">
             <td colspan="6" class="text-center">Sin registros de Estación de Metro</td>
           </tr>
-          <tr v-for="estacion in filteredEstaciones" :key="estacion.id">
+          <tr v-for="estacion in filteredEstaciones" :key="estacion.estacionId">
             <td>{{ estacion.date }}</td>
-            <td>{{ estacion.nombre_estacion }}</td>
-            <td>{{ estacion.descripcion_estacion }}</td>
-            <td>{{ estacion.ubicacion_estacion }}</td>
-            <td class="status">{{ estacion.estado_estacion ? 'Activo' : 'Inactivo' }}</td>
+            <td>{{ estacion.nombreEstacion }}</td>
+            <td>{{ estacion.descripcionEstacion }}</td>
+            <td>{{ estacion.ubicacionEstacion }}</td>
+            <td class="status">{{ estacion.estadoEstacion ? 'Activo' : 'Inactivo' }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', estacion)"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.id)"></i>
+              <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.estacionId)"></i>
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>{{ filteredEstaciones.length }} resultados encontrados: Página 1 de 100</p>
+        <p>{{ filteredEstaciones.length }} resultados encontrados</p>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -56,20 +55,20 @@
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
             <label for="nombre_estacion" class="form-label">Nombre de la estación <span class="required">*</span>:</label>
-            <input type="text" id="nombre_estacion" v-model="form.nombre_estacion" class="form-control" required>
+            <input type="text" id="nombre_estacion" v-model="form.nombreEstacion" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="descripcion_estacion" class="form-label">Descripción <span class="required">*</span>:</label>
-            <input type="text" id="descripcion_estacion" v-model="form.descripcion_estacion" class="form-control" required>
+            <input type="text" id="descripcion_estacion" v-model="form.descripcionEstacion" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="ubicacion_estacion" class="form-label">Ubicación <span class="required">*</span>:</label>
-            <input type="text" id="ubicacion_estacion" v-model="form.ubicacion_estacion" class="form-control" required>
+            <input type="text" id="ubicacion_estacion" v-model="form.ubicacionEstacion" class="form-control" required>
           </div>
           <div class="form-group">
             <label for="estado_estacion" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_estacion">
+              <input type="checkbox" v-model="form.estadoEstacion">
               <span class="slider round"></span>
             </label>
           </div>
@@ -86,6 +85,7 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios'; // Aquí está el import correcto
 
 export default {
   name: 'EstacionMetroView',
@@ -95,21 +95,17 @@ export default {
   },
   data() {
     return {
+      estaciones: [],
       searchQuery: '',
-      estaciones: [
-        { id: 1, date: '12 Jan 2022', nombre_estacion: 'Quitumbe', descripcion_estacion: 'Sur de Quito', ubicacion_estacion: 'Av. Cóndor Ñan y Av. Mariscal Sucre', estado_estacion: true },
-        { id: 2, date: '20 Jan 2022', nombre_estacion: 'Solanda', descripcion_estacion: 'Sur de Quito', ubicacion_estacion: 'Av. Ajavi', estado_estacion: true },
-        // Añade más datos de estaciones aquí
-      ],
-      form: {
-        id: null,
-        nombre_estacion: '',
-        descripcion_estacion: '',
-        ubicacion_estacion: '',
-        estado_estacion: false
-      },
       isOffCanvasOpen: false,
-      offCanvasTitle: ''
+      offCanvasTitle: '',
+      form: {
+        estacionId: null,
+        nombreEstacion: '',
+        descripcionEstacion: '',
+        ubicacionEstacion: '',
+        estadoEstacion: true
+      }
     };
   },
   computed: {
@@ -119,34 +115,30 @@ export default {
       }
       const query = this.searchQuery.trim().toLowerCase();
       return this.estaciones.filter(estacion => 
-        estacion.nombre_estacion.toLowerCase().includes(query)
+        estacion.nombreEstacion.toLowerCase().includes(query)
       );
     }
   },
   methods: {
-    openOffCanvas(action, estacion = null) {
-      if (action === 'add') {
-        this.offCanvasTitle = 'Agregar Estación';
-        this.form = {
-          id: null,
-          nombre_estacion: '',
-          descripcion_estacion: '',
-          ubicacion_estacion: '',
-          estado_estacion: false
-        };
-      } else {
-        this.offCanvasTitle = 'Editar Estación';
-        this.form = { ...estacion }; // Clonamos el objeto estacion para evitar modificaciones directas
+    async fetchEstaciones() {
+      try {
+        const response = await axios.get('http://localhost:4200/estacion');
+        this.estaciones = response.data;
+      } catch (error) {
+        console.error('Error al obtener las estaciones:', error);
       }
-      this.isOffCanvasOpen = true;
+    },
+    openOffCanvas(action, estacion = null) {
+      if (action === 'edit') {
+        this.offCanvasTitle = 'Editar Estación';
+        this.form = { ...estacion };
+        this.isOffCanvasOpen = true;
+      }
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    redirectToForm() {
-      this.$router.push('/create/EstacionMetro');
-    },
-    handleDeleteClick(estacionId) {
+    async handleDeleteClick(estacionId) {
       Swal.fire({
         title: '¿Estás seguro?',
         text: "¡No podrás revertir esto!",
@@ -155,49 +147,39 @@ export default {
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí, bórralo!'
-      }).then((result) => {
+      }).then(async (result) => {
         if (result.isConfirmed) {
-          // Remove the station from the array
-          this.estaciones = this.estaciones.filter(estacion => estacion.id !== estacionId);
-
-          Swal.fire(
-            '¡Borrado!',
-            'La estación ha sido borrada.',
-            'success'
-          );
+          try {
+            await axios.delete(`http://localhost:4200/estacion/${estacionId}`);
+            this.estaciones = this.estaciones.filter(estacion => estacion.estacionId !== estacionId);
+            Swal.fire('¡Borrado!', 'La estación ha sido borrada.', 'success');
+          } catch (error) {
+            Swal.fire('Error', 'Hubo un error al borrar la estación.', 'error');
+            console.error('Error al borrar la estación:', error);
+          }
         }
       });
     },
-    submitForm() {
-      if (!this.form.nombre_estacion || !this.form.descripcion_estacion || !this.form.ubicacion_estacion) {
-        Swal.fire({
-          title: 'Campos vacíos',
-          text: 'Por favor, completa todos los campos.',
-          icon: 'warning',
-        });
-        return;
-      }
-
-      if (this.form.id === null) {
-        // Adding a new station (if ID is null)
-        const newId = this.estaciones.length ? Math.max(...this.estaciones.map(e => e.id)) + 1 : 1;
-        this.estaciones.push({ ...this.form, id: newId, date: new Date().toLocaleDateString() });
-        Swal.fire('¡Agregado!', 'La estación ha sido agregada.', 'success');
-      } else {
-        // Updating an existing station
-        const index = this.estaciones.findIndex(e => e.id === this.form.id);
+    async submitForm() {
+      try {
+        // Actualizar una estación existente
+        await axios.put(`http://localhost:4200/estacion/${this.form.estacionId}`, this.form);
+        const index = this.estaciones.findIndex(e => e.estacionId === this.form.estacionId);
         if (index !== -1) {
           this.estaciones[index] = { ...this.form };
           Swal.fire('¡Actualizado!', 'La estación ha sido actualizada.', 'success');
         }
+        this.closeOffCanvas();
+      } catch (error) {
+        Swal.fire('Error', 'Hubo un error al actualizar la estación.', 'error');
+        console.error('Error al actualizar la estación:', error);
       }
-
-      this.closeOffCanvas();
     }
+  },
+  mounted() {
+    this.fetchEstaciones();
   }
 };
 </script>
-
-
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>

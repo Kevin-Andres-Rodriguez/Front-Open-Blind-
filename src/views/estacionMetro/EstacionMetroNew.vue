@@ -4,27 +4,26 @@
   <div class="content">
     <Nav />
     <div class="form-container">
-
       <form @submit.prevent="submitForm" class="form">
         <br>
         <div class="titulo"><h1>Crear Nueva Estación de Metro</h1></div>
         <br>
         <div class="form-group">
-          <label for="station_name" class="form-label">Nombre de la Estación <span class="required">*</span>:</label>
-          <input type="text" id="station_name" v-model="form.station_name" class="form-control" required>
+          <label for="nombreEstacion" class="form-label">Nombre de la Estación <span class="required">*</span>:</label>
+          <input type="text" id="nombreEstacion" v-model="form.nombreEstacion" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="description" class="form-label">Descripción <span class="required">*</span>:</label>
-          <input type="text" id="description" v-model="form.description" class="form-control" required>
+          <label for="descripcionEstacion" class="form-label">Descripción <span class="required">*</span>:</label>
+          <input type="text" id="descripcionEstacion" v-model="form.descripcionEstacion" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="location" class="form-label">Ubicación <span class="required">*</span>:</label>
-          <input type="text" id="location" v-model="form.location" class="form-control" required>
+          <label for="ubicacionEstacion" class="form-label">Ubicación <span class="required">*</span>:</label>
+          <input type="text" id="ubicacionEstacion" v-model="form.ubicacionEstacion" class="form-control" required>
         </div>   
         <div class="form-group">
-          <label for="status" class="form-label">Estado <span class="required">*</span>:</label>
+          <label for="estadoEstacion" class="form-label">Estado <span class="required">*</span>:</label>
           <label class="switch">
-            <input type="checkbox" v-model="form.status">
+            <input type="checkbox" id="estadoEstacion" v-model="form.estadoEstacion">
             <span class="slider round"></span>
           </label>
         </div>
@@ -40,49 +39,61 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
-  name: 'EstacionMetroEdit',
+  name: 'EstacionMetroCreate',
   components: {
     Navegation,
     Nav
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
       form: {
-        station_name: '',
-        description: '',
-        location: '',
-        status: false
+        nombreEstacion: '',
+        descripcionEstacion: '',
+        ubicacionEstacion: '',
+        estadoEstacion: false
       }
     };
   },
   methods: {
-    submitForm() {
-      Swal.fire({
-        title: 'Formulario Enviado',
-        text: `
-          Nombre de la Estación: ${this.form.station_name}
-          Descripción: ${this.form.description}
-          Ubicación: ${this.form.location}
-          Estado: ${this.form.status ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      console.log(this.form);
-      // Aquí puedes agregar la lógica para enviar el formulario
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
+    async submitForm() {
+      try {
+        // Enviar los datos del formulario al backend
+        const response = await axios.post('http://localhost:4200/estacion', this.form);
+        
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Estación Creada',
+          text: 'La estación ha sido creada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+
+        // Limpiar el formulario
+        this.form = {
+          nombreEstacion: '',
+          descripcionEstacion: '',
+          ubicacionEstacion: '',
+          estadoEstacion: false
+        };
+
+        // Redirigir a otra página si es necesario
+        // this.$router.push('/ruta-a-donde-redirigir');
+      } catch (error) {
+        // Mostrar mensaje de error
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al crear la estación.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        console.error('Error al crear la estación:', error);
+      }
     }
   }
 };
 </script>
-
-
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetroNew.css"></style>
