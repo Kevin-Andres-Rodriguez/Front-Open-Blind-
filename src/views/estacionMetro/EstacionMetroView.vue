@@ -26,7 +26,7 @@
             <td colspan="6" class="text-center">Sin registros de Estación de Metro</td>
           </tr>
           <tr v-for="estacion in filteredEstaciones" :key="estacion.estacionId">
-            <td>{{ estacion.date }}</td>
+            <td>{{ estacion.createEstacion }}</td>
             <td>{{ estacion.nombreEstacion }}</td>
             <td>{{ estacion.descripcionEstacion }}</td>
             <td>{{ estacion.ubicacionEstacion }}</td>
