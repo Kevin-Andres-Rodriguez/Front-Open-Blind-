@@ -19,14 +19,12 @@
         <div class="form-group">
           <label for="ubicacionEstacion" class="form-label">Ubicación <span class="required">*</span>:</label>
           <input type="text" id="ubicacionEstacion" v-model="form.ubicacionEstacion" class="form-control" required>
-        </div>   
+        </div> 
         <div class="form-group">
           <label for="estadoEstacion" class="form-label">Estado <span class="required">*</span>:</label>
-          <label class="switch">
-            <input type="checkbox" id="estadoEstacion" v-model="form.estadoEstacion">
-            <span class="slider round"></span>
-          </label>
-        </div>
+          <input type="text" id="estadoEstacion" v-model="form.estadoEstacion" class="form-control" required>
+        </div>   
+
         <div class="form-group-button">
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
@@ -53,7 +51,7 @@ export default {
         nombreEstacion: '',
         descripcionEstacion: '',
         ubicacionEstacion: '',
-        estadoEstacion: false
+        estadoEstacion: ''
       }
     };
   },

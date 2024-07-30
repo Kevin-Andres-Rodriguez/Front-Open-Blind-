@@ -30,9 +30,7 @@
             <td>{{ punto.nombrePunto }}</td>
             <td>{{ punto.descripcionPunto }}</td>
             <td>{{ punto.ubicacionPunto }}</td>
-            <td :class="{'status-active': punto.estadoPunto, 'status-inactive': !punto.estadoPunto}">
-              {{ punto.estadoPunto ? 'Activo' : 'Inactivo' }}
-            </td>
+            <td>{{ punto.estadoPunto }}</td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', punto)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.puntointeresId)"></i>
@@ -69,11 +67,8 @@
             <input type="text" id="ubicacion_punto" v-model="form.ubicacionPunto" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="estado_punto" class="form-label">Estado <span class="required">*</span>:</label>
-            <label class="switch">
-              <input type="checkbox" v-model="form.estadoPunto">
-              <span class="slider round"></span>
-            </label>
+            <label for="estadoPunto" class="form-label">Estado<span class="required">*</span>:</label>
+            <input type="text" id="estadoPunto" v-model="form.estadoPunto" class="form-control" required>
           </div>
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>
@@ -107,7 +102,7 @@ export default {
         nombrePunto: '',
         descripcionPunto: '',
         ubicacionPunto: '',
-        estadoPunto: true,
+        estadoPunto: '',
         createPunto: ''
       },
     };

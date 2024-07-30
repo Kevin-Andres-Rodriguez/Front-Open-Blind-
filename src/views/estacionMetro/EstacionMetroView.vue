@@ -30,9 +30,8 @@
             <td>{{ estacion.nombreEstacion }}</td>
             <td>{{ estacion.descripcionEstacion }}</td>
             <td>{{ estacion.ubicacionEstacion }}</td>
-            <td :class="{'status-active': estacion.estadoEstacion, 'status-inactive': !estacion.estadoEstacion}">
-              {{ estacion.estadoEstacion ? 'Activo' : 'Inactivo' }}
-            </td>
+            <td>{{ estacion.estadoEstacion }}</td>
+            
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', estacion)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.estacionId)"></i>
@@ -69,12 +68,10 @@
             <input type="text" id="ubicacion_estacion" v-model="form.ubicacionEstacion" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="estado_estacion" class="form-label">Estado <span class="required">*</span>:</label>
-            <label class="switch">
-              <input type="checkbox" v-model="form.estadoEstacion">
-              <span class="slider round"></span>
-            </label>
+            <label for="ubicacion_estacion" class="form-label">Estado <span class="required">*</span>:</label>
+            <input type="text" id="estadoEstacion" v-model="form.estadoEstacion" class="form-control" required>
           </div>
+
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>
           </div>
@@ -107,7 +104,7 @@ export default {
         nombreEstacion: '',
         descripcionEstacion: '',
         ubicacionEstacion: '',
-        estadoEstacion: true
+        estadoEstacion: ''
       }
     };
   },

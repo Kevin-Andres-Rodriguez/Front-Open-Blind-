@@ -30,7 +30,7 @@
             <td>{{ ruta.nombreRuta }}</td>
             <td>{{ ruta.descripcionRuta }}</td>
             <td>{{ ruta.ubicacionRuta }}</td>
-            <td class="status">{{ ruta.estadoRuta ? 'Activo' : 'Inactivo' }}</td>
+            <td>{{ ruta.estadoRuta }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', ruta)"></i>
@@ -67,11 +67,8 @@
             <input type="text" id="ubicacion_ruta" v-model="form.ubicacionRuta" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="estado_ruta" class="form-label">Estado <span class="required">*</span>:</label>
-            <label class="switch">
-              <input type="checkbox" v-model="form.estadoRuta">
-              <span class="slider round"></span>
-            </label>
+            <label for="estadoRuta" class="form-label">Estado <span class="required">*</span>:</label>
+            <input type="text" id="estadoRuta" v-model="form.estadoRuta" class="form-control" required>
           </div>
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>

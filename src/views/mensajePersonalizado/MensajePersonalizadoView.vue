@@ -28,9 +28,7 @@
             <td>{{ mensaje.createMensaje }}</td>
             <td>{{ mensaje.mensaje }}</td>
             <td>{{ mensaje.contactoMensaje }}</td>
-            <td :class="{'status-active': mensaje.estadoMensaje, 'status-inactive': !mensaje.estadoMensaje}">
-              {{ mensaje.estadoMensaje ? 'Activo' : 'Inactivo' }}
-            </td>
+            <td>{{ mensaje.estadoMensaje }}</td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', mensaje)"></i>
               <i class="fas fa-trash-alt" @click="handleDeleteClick(mensaje.mensajeId)"></i>
@@ -63,11 +61,8 @@
             <input type="text" id="contacto" v-model="form.contactoMensaje" class="form-control" required>
           </div>
           <div class="form-group">
-            <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
-            <label class="switch">
-              <input type="checkbox" v-model="form.estadoMensaje">
-              <span class="slider round"></span>
-            </label>
+            <label for="estadoMensaje" class="form-label">Estado <span class="required">*</span>:</label>
+            <input type="text" id="estadoMensaje" v-model="form.estadoMensaje" class="form-control" required>
           </div>
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>
@@ -100,7 +95,7 @@ export default {
         mensajeId: null,
         mensaje: '',
         contactoMensaje: '',
-        estadoMensaje: true,
+        estadoMensaje: '',
         createMensaje: ''
       }
     };
