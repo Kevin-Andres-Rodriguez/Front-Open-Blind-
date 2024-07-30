@@ -8,25 +8,22 @@
         <h1>Crear Nueva Guía de Voz</h1>
       </div>
       <br>
-      <form @submit.prevent="submitForm" class="form">                
+      <form @submit.prevent="submitForm" class="form">
         <div class="form-group">
-          <label for="descripcion_g" class="form-label">Descripción <span class="required">*</span>:</label>
-          <textarea id="descripcion_g" v-model="form.descripcion_g" class="form-control" rows="2" required></textarea>
+          <label for="descripcionGuiaVoz" class="form-label">Descripción <span class="required">*</span>:</label>
+          <textarea id="descripcionGuiaVoz" v-model="form.descripcionGuiaVoz" class="form-control" rows="2" required></textarea>
         </div>
         <div class="form-group">
-          <label for="audio_url" class="form-label">Audio URL<span class="required">*</span>:</label>
-          <input type="text" id="audio_url" v-model="form.audio_url" class="form-control" required>
+          <label for="audioUrlGuiaVoz" class="form-label">Audio URL <span class="required">*</span>:</label>
+          <input type="text" id="audioUrlGuiaVoz" v-model="form.audioUrlGuiaVoz" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="idioma" class="form-label">Idioma <span class="required">*</span>:</label>
-          <input type="text" id="idioma" v-model="form.idioma" class="form-control" required>
+          <label for="idiomaGuiaVoz" class="form-label">Idioma <span class="required">*</span>:</label>
+          <input type="text" id="idiomaGuiaVoz" v-model="form.idiomaGuiaVoz" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="estado" class="form-label">Estado <span class="required">*</span>:</label>
-          <label class="switch">
-            <input type="checkbox" v-model="form.estado">
-            <span class="slider round"></span>
-          </label>
+          <label for="estadoGuiaVoz" class="form-label">Estado <span class="required">*</span>:</label>
+          <input type="text" id="estadoGuiaVoz" v-model="form.estadoGuiaVoz" class="form-control" required>
         </div>
         <div class="form-group-button">
           <button type="submit" class="btn btn-primary">Guardar</button>
@@ -40,43 +37,62 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
-  name: 'GuiaVozNew',
+  name: 'GuiaVozCreate',
   components: {
     Navegation,
     Nav
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
       form: {
-        descripcion_g: '',
-        audio_url: '',
-        idioma: '',        
-        estado: false
+        descripcionGuiaVoz: '',
+        audioUrlGuiaVoz: '',
+        idiomaGuiaVoz: '',
+        estadoGuiaVoz: ''
       }
     };
   },
   methods: {
-    submitForm() {
-      Swal.fire({
-        title: 'Formulario Enviado',
-        text: `
-          Descripción: ${this.form.descripcion_g}
-          Audio URL: ${this.form.audio_url}
-          Idioma: ${this.form.idioma}
-          Estado: ${this.form.estado ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      console.log(this.form);
+    async submitForm() {
+      try {
+        // Enviar los datos del formulario al backend
+        const response = await axios.post('http://localhost:4200/guiaVoz', this.form);
+
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Guía de Voz Creada',
+          text: 'La guía de voz ha sido creada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+
+        // Limpiar el formulario
+        this.form = {
+          descripcionGuiaVoz: '',
+          audioUrlGuiaVoz: '',
+          idiomaGuiaVoz: '',
+          estadoGuiaVoz: ''
+        };
+
+        // Redirigir a otra página si es necesario
+        // this.$router.push('/ruta-a-donde-redirigir');
+      } catch (error) {
+        // Mostrar mensaje de error
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al crear la guía de voz.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        console.error('Error al crear la guía de voz:', error);
+      }
     }
   }
 };
 </script>
+
 
 <style scoped src="@/assets/styles/guiaVoz/guiaVozNew.css"></style>

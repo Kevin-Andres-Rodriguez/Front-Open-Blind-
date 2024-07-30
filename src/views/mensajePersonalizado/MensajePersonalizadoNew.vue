@@ -6,18 +6,18 @@
       <br>
       <div class="titulo"><h1>Crear Nuevo Mensaje Personalizado</h1></div>
       <br>
-      <form @submit.prevent="submitForm" class="form">        
+      <form @submit.prevent="submitForm" class="form">
         <div class="form-group">
-          <label for="mensaje" class="form-label">Mensaje<span class="required">*</span>:</label>
-          <input type="text" id="mensaje" v-model="form.mensaje" class="form-control" required>
+          <label for="mensaje" class="form-label">Mensaje <span class="required">*</span>:</label>
+          <textarea id="mensaje" v-model="form.mensaje" class="form-control" rows="2" required></textarea>
         </div>
         <div class="form-group">
-          <label for="contactom" class="form-label">Contacto <span class="required">*</span>:</label>
-          <textarea id="contactom" v-model="form.contactom" class="form-control" rows="2" required></textarea>
+          <label for="contactoMensaje" class="form-label">Contacto <span class="required">*</span>:</label>
+          <input type="text" id="contactoMensaje" v-model="form.contactoMensaje" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="contactom" class="form-label">Estado: <span class="required">*</span>:</label>
-          <textarea id="contactom" v-model="form.contactom" class="form-control" rows="2" required></textarea>
+          <label for="estadoMensaje" class="form-label">Estado <span class="required">*</span>:</label>
+          <input type="text" id="estadoMensaje" v-model="form.estadoMensaje" class="form-control" required>
         </div>
 
         <div class="form-group-button">
@@ -32,48 +32,61 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
-  name: 'MensajePersonalizadoNew',
+  name: 'MensajePersonalizadoCreate',
   components: {
     Navegation,
     Nav
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
       form: {
         mensaje: '',
-        contactom: '',          
-        estadom: false
+        contactoMensaje: '',
+        estadoMensaje: ''
       }
     };
   },
   methods: {
-    submitForm() {
-      Swal.fire({
-        title: 'Formulario Enviado',
-        text: `
-          Mensaje: ${this.form.mensaje}
-          Contacto: ${this.form.contactom}
-          Estado: ${this.form.estadom ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      console.log(this.form);
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
-    },
-    closeDropdown() {
-      this.isOpen = false;
+    async submitForm() {
+      try {
+        // Enviar los datos del formulario al backend
+        const response = await axios.post('http://localhost:4200/mensajePersonalizado', this.form);
+
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Mensaje Personalizado Creado',
+          text: 'El mensaje personalizado ha sido creado exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+
+        // Limpiar el formulario
+        this.form = {
+          mensaje: '',
+          contactoMensaje: '',
+          estadoMensaje: ''
+        };
+
+        // Redirigir a otra página si es necesario
+        // this.$router.push('/ruta-a-donde-redirigir');
+      } catch (error) {
+        // Mostrar mensaje de error
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al crear el mensaje personalizado.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        console.error('Error al crear el mensaje personalizado:', error);
+      }
     }
   }
 };
 </script>
+
 
 
 <style scoped src="@/assets/styles/mensajePersonalizado/mensajePersonalizadoNew.css"></style>

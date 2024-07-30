@@ -8,20 +8,20 @@
       <br>
       <form @submit.prevent="submitForm" class="form">        
         <div class="form-group">
-          <label for="nombre_ruta" class="form-label">Nombre de la ruta <span class="required">*</span>:</label>
-          <input type="text" id="nombre_ruta" v-model="form.nombre_ruta" class="form-control" required>
+          <label for="nombreRuta" class="form-label">Nombre de la Ruta <span class="required">*</span>:</label>
+          <input type="text" id="nombreRuta" v-model="form.nombreRuta" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="descripcion_ruta" class="form-label">Descripción <span class="required">*</span>:</label>
-          <textarea id="descripcion_ruta" v-model="form.descripcion_ruta" class="form-control" rows="2" required></textarea>
+          <label for="descripcionRuta" class="form-label">Descripción <span class="required">*</span>:</label>
+          <textarea id="descripcionRuta" v-model="form.descripcionRuta" class="form-control" rows="2" required></textarea>
         </div>
         <div class="form-group">
-          <label for="ubicacion_ruta" class="form-label">Ubicación <span class="required">*</span>:</label>
-          <input type="text" id="ubicacion_ruta" v-model="form.ubicacion_ruta" class="form-control" required>
+          <label for="ubicacionRuta" class="form-label">Ubicación <span class="required">*</span>:</label>
+          <input type="text" id="ubicacionRuta" v-model="form.ubicacionRuta" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="ubicacion_ruta" class="form-label">Ruta <span class="required">*</span>:</label>
-          <input type="text" id="ubicacion_ruta" v-model="form.ubicacion_ruta" class="form-control" required>
+          <label for="estadoRuta" class="form-label">Estado <span class="required">*</span>:</label>
+          <input type="text" id="estadoRuta" v-model="form.estadoRuta" class="form-control" required>
         </div>
 
         <div class="form-group-button">
@@ -36,50 +36,63 @@
 import Nav from '@/components/Nav.vue';
 import Navegation from '@/components/Navegation.vue';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 
 export default {
-  name: 'RutaNew',
+  name: 'RutaCreate',
   components: {
     Navegation,
     Nav
   },
   data() {
     return {
-      isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://via.placeholder.com/40',
       form: {
-        nombre_ruta: '',
-        descripcion_ruta: '',
-        ubicacion_ruta: '',        
-        estado_ruta: false
+        nombreRuta: '',
+        descripcionRuta: '',
+        ubicacionRuta: '',
+        estadoRuta: ''
       }
     };
   },
   methods: {
-    submitForm() {
-      Swal.fire({
-        title: 'Formulario Enviado',
-        text: `
-          Nombre: ${this.form.nombre_ruta}
-          Descripción: ${this.form.descripcion_ruta}
-          Ubicación: ${this.form.ubicacion_ruta}
-          Estado: ${this.form.estado_ruta ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      console.log(this.form);
-    },
-    toggleDropdown() {
-      this.isOpen = !this.isOpen;
-    },
-    closeDropdown() {
-      this.isOpen = false;
+    async submitForm() {
+      try {
+        // Enviar los datos del formulario al backend
+        const response = await axios.post('http://localhost:4200/ruta', this.form);
+
+        // Mostrar mensaje de éxito
+        Swal.fire({
+          title: 'Ruta Creada',
+          text: 'La ruta ha sido creada exitosamente.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
+
+        // Limpiar el formulario
+        this.form = {
+          nombreRuta: '',
+          descripcionRuta: '',
+          ubicacionRuta: '',
+          estadoRuta: ''
+        };
+
+        // Redirigir a otra página si es necesario
+        // this.$router.push('/ruta-a-donde-redirigir');
+      } catch (error) {
+        // Mostrar mensaje de error
+        Swal.fire({
+          title: 'Error',
+          text: 'Hubo un error al crear la ruta.',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+        console.error('Error al crear la ruta:', error);
+      }
     }
   }
 };
 </script>
+
 
 
 <style scoped src="@/assets/styles/ruta/rutaNew.css"></style>

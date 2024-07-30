@@ -30,9 +30,7 @@
             <td>{{ formatDate(item.createGuiaVoz) }}</td>
             <td>{{ item.descripcionGuiaVoz }}</td>
             <td>{{ item.audioUrlGuiaVoz }}</td>
-            <td class="status">
-              {{ item.estadoGuiaVoz ? "Activo" : "Inactivo" }}
-            </td>
+            <td>{{ item.estadoGuiaVoz }}</td>
             <td class="actions">
               <i class="fas fa-plus-circle" @click="redirectToForm"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', item)"></i>
@@ -83,14 +81,18 @@
             />
           </div>
           <div class="form-group">
-            <label for="status" class="form-label"
+            <label for="audioUrl" class="form-label"
               >Estado <span class="required">*</span>:</label
             >
-            <label class="switch">
-              <input type="checkbox" v-model="form.estadoGuiaVoz" />
-              <span class="slider round"></span>
-            </label>
+            <input
+              type="text"
+              id="estadoGuiaVoz"
+              v-model="form.estadoGuiaVoz"
+              class="form-control"
+              required
+            />
           </div>
+
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>
           </div>
