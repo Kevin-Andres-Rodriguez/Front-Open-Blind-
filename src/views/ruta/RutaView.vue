@@ -36,7 +36,6 @@
             <td>{{ ruta.ubicacionRuta }}</td>
             <td>{{ ruta.estadoRuta }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="openOffCanvas('add')"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', ruta)"></i>
               <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(ruta.rutaId)"></i> -->
             </td>
@@ -48,6 +47,9 @@
           {{ filteredRutas.length }} resultados encontrados: Mostrando página 1
           de 100
         </p>
+        <button class="add-btn" @click="redirectToCreateRuta">
+          Agregar
+        </button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -244,6 +246,9 @@ export default {
         Swal.fire("Error", "Hubo un error al guardar la ruta.", "error");
         console.error("Error al guardar la ruta:", error);
       }
+    },
+    redirectToCreateRuta() {
+      this.$router.push("/create/Ruta");
     },
   },
   mounted() {

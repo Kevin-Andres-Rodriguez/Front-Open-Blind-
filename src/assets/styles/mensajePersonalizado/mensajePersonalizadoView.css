@@ -227,7 +227,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 2px;
-    background-color: #007bff;
+    background-color: #000000;
     color: #fff;
   }
   
@@ -317,8 +317,8 @@
   }
   
   .btn {
-    background-color: #007bff;
-    color: white;
+    background-color: #e7e7e7;
+    color: rgb(0, 0, 0);
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
@@ -327,4 +327,5 @@
   
   .btn:hover {
     background-color: #0056b3;
+    color: #ddd;
   }

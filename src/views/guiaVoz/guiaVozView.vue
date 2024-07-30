@@ -32,7 +32,6 @@
             <td>{{ item.audioUrlGuiaVoz }}</td>
             <td>{{ item.estadoGuiaVoz }}</td>
             <td class="actions">
-              <i class="fas fa-plus-circle" @click="redirectToForm"></i>
               <i class="fas fa-edit" @click="openOffCanvas('edit', item)"></i>
               <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(item.guiaVozId)"></i>  -->
             </td>
@@ -43,6 +42,9 @@
         <p>
           {{ filteredItems.length }} resultados encontrados: Página 1 de 100
         </p>
+        <button class="add-btn" @click="redirectToCreateGuia">
+          Agregar
+        </button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -223,6 +225,9 @@ export default {
     },
     redirectToForm() {
       // Implement your redirection logic here
+    },
+    redirectToCreateGuia() {
+      this.$router.push("/create/GuiaVoz");
     },
   },
   mounted() {
