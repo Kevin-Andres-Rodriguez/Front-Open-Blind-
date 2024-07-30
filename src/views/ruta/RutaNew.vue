@@ -20,12 +20,10 @@
           <input type="text" id="ubicacion_ruta" v-model="form.ubicacion_ruta" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="estado_ruta" class="form-label">Estado <span class="required">*</span>:</label>
-          <label class="switch">
-            <input type="checkbox" v-model="form.estado_ruta">
-            <span class="slider round"></span>
-          </label>
+          <label for="ubicacion_ruta" class="form-label">Ruta <span class="required">*</span>:</label>
+          <input type="text" id="ubicacion_ruta" v-model="form.ubicacion_ruta" class="form-control" required>
         </div>
+
         <div class="form-group-button">
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>

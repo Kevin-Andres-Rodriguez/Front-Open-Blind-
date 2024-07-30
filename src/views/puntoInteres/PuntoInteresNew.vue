@@ -20,11 +20,8 @@
           <input type="text" id="ubicacion_punto" v-model="form.ubicacion_punto" class="form-control" required>
         </div>
         <div class="form-group">
-          <label for="estado_punto" class="form-label">Estado <span class="required">*</span>:</label>
-          <label class="switch">
-            <input type="checkbox" v-model="form.estado_punto">
-            <span class="slider round"></span>
-          </label>
+          <label for="ubicacion_punto" class="form-label">Estado<span class="required">*</span>:</label>
+          <input type="text" id="ubicacion_punto" v-model="form.ubicacion_punto" class="form-control" required>
         </div>
         <div class="form-group-button">
           <button type="submit" class="btn btn-primary">Guardar</button>

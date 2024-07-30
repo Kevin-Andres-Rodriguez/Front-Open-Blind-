@@ -16,12 +16,10 @@
           <textarea id="contactom" v-model="form.contactom" class="form-control" rows="2" required></textarea>
         </div>
         <div class="form-group">
-          <label for="estadom" class="form-label">Estado <span class="required">*</span>:</label>
-          <label class="switch">
-            <input type="checkbox" v-model="form.estadom">
-            <span class="slider round"></span>
-          </label>
+          <label for="contactom" class="form-label">Estado: <span class="required">*</span>:</label>
+          <textarea id="contactom" v-model="form.contactom" class="form-control" rows="2" required></textarea>
         </div>
+
         <div class="form-group-button">
           <button type="submit" class="btn btn-primary">Guardar</button>
         </div>

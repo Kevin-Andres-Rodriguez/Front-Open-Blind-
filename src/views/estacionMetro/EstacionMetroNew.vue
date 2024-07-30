@@ -74,7 +74,7 @@ export default {
           nombreEstacion: '',
           descripcionEstacion: '',
           ubicacionEstacion: '',
-          estadoEstacion: false
+          estadoEstacion: ""
         };
 
         // Redirigir a otra página si es necesario
