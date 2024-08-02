@@ -6,7 +6,7 @@
       <h2>Usuarios</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar..." v-model="searchQuery">
+        <input type="text" placeholder="Buscar..." v-model="searchQuery" />
       </div>
     </div>
     <div class="table-container">
@@ -29,17 +29,14 @@
           </tr>
           <tr v-for="user in filteredUsers" :key="user.id">
             <td>{{ user.date }}</td>
-            <td>{{ user.nombre }}</td>
-            <td>{{ user.apellido }}</td>
-            <td>{{ user.correo }}</td>
-            <td>{{ user.telefono }}</td>
-            <td>{{ user.fechaNacimiento }}</td>
-            <td :class="{'status-active': user.estado === 'Activo', 'status-inactive': user.estado === 'Inactivo'}">
-              {{ user.estado }}
-            </td>
-            <td class="actions">
+            <td>{{ user.nombreUsuario }}</td>
+            <td>{{ user.apellidoUsuario }}</td>
+            <td>{{ user.correoUsuario }}</td>
+            <td>{{ user.telefonoUsuario }}</td>
+            <td>{{ user.fechaNacimientoUsuario }}</td>
+            <td>{{ user.estado_usuario }}</td>
+            <td :class="{'status-active': user.estado_usuario === 'Activo', 'status-inactive': user.estado_usuario === 'Desactivado'}">
               <i class="fas fa-edit" @click="openOffCanvas('edit', user)"></i>
-              <i class="fas fa-trash-alt" @click="handleDeleteClick(user.id)"></i>
             </td>
           </tr>
         </tbody>
@@ -61,29 +58,29 @@
       <div class="off-canvas-body">
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
-            <label for="nombre_usuario" class="form-label">Nombres <span class="required">*</span>:</label>
-            <input type="text" id="nombre_usuario" v-model="form.nombre_usuario" class="form-control" required>
+            <label for="nombreUsuario" class="form-label">Nombres <span class="required">*</span>:</label>
+            <input type="text" id="nombreUsuario" v-model="form.nombreUsuario" class="form-control" required />
           </div>
           <div class="form-group">
-            <label for="apellido_usuario" class="form-label">Apellidos <span class="required">*</span>:</label>
-            <input type="text" id="apellido_usuario" v-model="form.apellido_usuario" class="form-control" required>
+            <label for="apellidoUsuario" class="form-label">Apellidos <span class="required">*</span>:</label>
+            <input type="text" id="apellidoUsuario" v-model="form.apellidoUsuario" class="form-control" required />
           </div>
           <div class="form-group">
-            <label for="correo_usuario" class="form-label">Email <span class="required">*</span>:</label>
-            <input type="email" id="correo_usuario" v-model="form.correo_usuario" class="form-control" required>
+            <label for="correoUsuario" class="form-label">Email <span class="required">*</span>:</label>
+            <input type="email" id="correoUsuario" v-model="form.correoUsuario" class="form-control" required />
           </div>
           <div class="form-group">
-            <label for="telefono_usuario" class="form-label">Teléfono <span class="required">*</span>:</label>
-            <input type="text" id="telefono_usuario" v-model="form.telefono_usuario" class="form-control" required>
+            <label for="telefonoUsuario" class="form-label">Teléfono <span class="required">*</span>:</label>
+            <input type="text" id="telefonoUsuario" v-model="form.telefonoUsuario" class="form-control" required />
           </div>
           <div class="form-group">
-            <label for="fecha_nacimiento_usuario" class="form-label">Fecha de Nacimiento <span class="required">*</span>:</label>
-            <input type="date" id="fecha_nacimiento_usuario" v-model="form.fecha_nacimiento_usuario" class="form-control" required>
+            <label for="fechaNacimientoUsuario" class="form-label">Fecha de Nacimiento <span class="required">*</span>:</label>
+            <input type="date" id="fechaNacimientoUsuario" v-model="form.fechaNacimientoUsuario" class="form-control" required />
           </div>
           <div class="form-group">
             <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_usuario">
+              <input type="checkbox" v-model="form.estado_usuario" />
               <span class="slider round"></span>
             </label>
           </div>
@@ -97,68 +94,86 @@
 </template>
 
 <script>
-import Nav from '@/components/Nav.vue';
-import Navegation from '@/components/Navegation.vue';
-import Swal from 'sweetalert2';
+import Nav from "@/components/Nav.vue";
+import Navegation from "@/components/Navegation.vue";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 export default {
-  name: 'UserView',
+  name: "UserView",
   components: {
     Navegation,
-    Nav
+    Nav,
   },
   data() {
     return {
+      users: [],
+      searchQuery: "",
       isOffCanvasOpen: false,
-      offCanvasTitle: '',
+      offCanvasTitle: "",
       form: {
-        id: null,
-        nombre_usuario: '',
-        apellido_usuario: '',
-        correo_usuario: '',
-        telefono_usuario: '',
-        fecha_nacimiento_usuario: '',
-        estado_usuario: false
+        usuarioId: null,
+        nombreUsuario: "",
+        apellidoUsuario: "",
+        telefonoUsuario: "",
+        correoUsuario: "",
+        fechaNacimientoUsuario: "",
+        estado_usuario: "Desactivado", // Valor predeterminado como texto
       },
-      searchQuery: '',
-      users: [
-        { id: 1, date: '12 Jan 2022', nombre: 'Juan', apellido: 'Andrade', correo: 'juandandrade@gmail.com', telefono: '0987475123', fechaNacimiento: '2002-04-14', estado: 'Activo' },
-        { id: 2, date: '15 Feb 2022', nombre: 'Maria', apellido: 'Gomez', correo: 'maria.gomez@gmail.com', telefono: '0987654321', fechaNacimiento: '1995-08-22', estado: 'Inactivo' }
-      ]
     };
   },
   computed: {
     filteredUsers() {
-      const query = this.searchQuery.toLowerCase();
-      return this.users.filter(user =>
-        user.nombre.toLowerCase().includes(query) ||
-        user.apellido.toLowerCase().includes(query) ||
-        user.correo.toLowerCase().includes(query)
+      const query = this.searchQuery.trim().toLowerCase();
+      return this.users.filter(
+        (user) =>
+          user.nombreUsuario.toLowerCase().includes(query) ||
+          user.apellidoUsuario.toLowerCase().includes(query) ||
+          user.correoUsuario.toLowerCase().includes(query)
       );
-    }
+    },
   },
   methods: {
+    async fetchUsers() {
+      try {
+        const response = await axios.get("http://localhost:4200/usuario");
+        this.users = response.data.map(user => ({
+          ...user,
+          estado_usuario: user.estado_usuario === 1 ? "Activo" : "Desactivado" // Convertir estado al texto
+        }));
+      } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+      }
+    },
+    formatDateForInput(date) {
+      if (!date) return "";
+      const d = new Date(date);
+      const year = d.getFullYear();
+      const month = ("0" + (d.getMonth() + 1)).slice(-2);
+      const day = ("0" + d.getDate()).slice(-2);
+      return `${year}-${month}-${day}`;
+    },
     openOffCanvas(action, user = null) {
-      this.offCanvasTitle = action === 'add' ? 'Agregar Usuario' : 'Editar Usuario';
-      if (action === 'edit' && user) {
+      this.offCanvasTitle = action === "add" ? "Agregar Usuario" : "Editar Usuario";
+      if (action === "edit" && user) {
         this.form = {
-          id: user.id,
-          nombre_usuario: user.nombre,
-          apellido_usuario: user.apellido,
-          correo_usuario: user.correo,
-          telefono_usuario: user.telefono,
-          fecha_nacimiento_usuario: user.fechaNacimiento,
-          estado_usuario: user.estado === 'Activo'
+          usuarioId: user.usuarioId,
+          nombreUsuario:  user.nombreUsuario,
+          apellidoUsuario: user.apellidoUsuario,
+          telefonoUsuario: user.telefonoUsuario,
+          correoUsuario: user.correoUsuario,
+          fechaNacimientoUsuario: this.formatDateForInput(user.fechaNacimientoUsuario),
+          estado_usuario: user.estado_usuario, // Mantener como texto
         };
       } else {
         this.form = {
-          id: null,
-          nombre_usuario: '',
-          apellido_usuario: '',
-          correo_usuario: '',
-          telefono_usuario: '',
-          fecha_nacimiento_usuario: '',
-          estado_usuario: false
+          usuarioId: null,
+          nombreUsuario: "",
+          apellidoUsuario: "",
+          telefonoUsuario: "",
+          correoUsuario: "",
+          fechaNacimientoUsuario: "",
+          estado_usuario: "Desactivado", // Valor predeterminado como texto
         };
       }
       this.isOffCanvasOpen = true;
@@ -166,73 +181,60 @@ export default {
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    handleDeleteClick(userId) {
-      Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción eliminará el usuario.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.users = this.users.filter(user => user.id !== userId);
-          Swal.fire(
-            'Eliminado!',
-            'El usuario ha sido eliminado.',
-            'success'
-          );
-        }
-      });
-    },
-    submitForm() {
-      if (this.form.id) { // Editar
-        const index = this.users.findIndex(user => user.id === this.form.id);
-        if (index !== -1) {
-          this.users[index] = {
-            ...this.users[index],
-            nombre: this.form.nombre_usuario,
-            apellido: this.form.apellido_usuario,
-            correo: this.form.correo_usuario,
-            telefono: this.form.telefono_usuario,
-            fechaNacimiento: this.form.fecha_nacimiento_usuario,
-            estado: this.form.estado_usuario ? 'Activo' : 'Inactivo'
-          };
-        }
-      } else { // Agregar
-        this.users.push({
-          id: Date.now(), // Generar ID único para el nuevo usuario
-          date: new Date().toLocaleDateString(),
-          nombre: this.form.nombre_usuario,
-          apellido: this.form.apellido_usuario,
-          correo: this.form.correo_usuario,
-          telefono: this.form.telefono_usuario,
-          fechaNacimiento: this.form.fecha_nacimiento_usuario,
-          estado: this.form.estado_usuario ? 'Activo' : 'Inactivo'
+    async handleDeleteClick(usuarioId) {
+      try {
+        await Swal.fire({
+          title: "¿Estás seguro?",
+          text: "Esta acción eliminará el usuario.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Sí, eliminar",
+          cancelButtonText: "Cancelar",
         });
+        await axios.delete(`http://localhost:4200/usuario/${usuarioId}`);
+        this.users = this.users.filter((user) => user.usuarioId !== usuarioId);
+        Swal.fire("Eliminado!", "El usuario ha sido eliminado.", "success");
+      } catch (error) {
+        Swal.fire("Error", "Hubo un error al eliminar el usuario.", "error");
+        console.error("Error al eliminar el usuario:", error);
       }
-      
-      Swal.fire({
-        title: 'Datos Guardados',
-        text: `
-          Nombres: ${this.form.nombre_usuario}
-          Apellidos: ${this.form.apellido_usuario}
-          Email: ${this.form.correo_usuario}
-          Teléfono: ${this.form.telefono_usuario}
-          Fecha de Nacimiento: ${this.form.fecha_nacimiento_usuario}
-          Estado: ${this.form.estado_usuario ? 'Activo' : 'Inactivo'}
-        `,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-
-      this.closeOffCanvas();
+    },
+    async submitForm() {
+      try {
+        if (this.form.usuarioId) {
+          await axios.put(`http://localhost:4200/usuario/${this.form.usuarioId}`, {
+            ...this.form,
+            estado_usuario: this.form.estado_usuario === "Activo" ? 1 : 0 // Convertir estado a número
+          });
+          const index = this.users.findIndex((user) => user.usuarioId === this.form.usuarioId);
+          if (index !== -1) {
+            this.users[index] = { ...this.form, estado_usuario: this.form.estado_usuario };
+          }
+          Swal.fire("¡Actualizado!", "El usuario ha sido actualizado.", "success");
+        } else {
+          await axios.post("http://localhost:4200/usuario", {
+            ...this.form,
+            estado_usuario: this.form.estado_usuario === "Activo" ? 1 : 0 // Convertir estado a número
+          });
+          this.users.push({ ...this.form, usuarioId: Date.now(), date: new Date().toLocaleDateString() });
+          Swal.fire("¡Guardado!", "El usuario ha sido agregado.", "success");
+        }
+        this.closeOffCanvas();
+      } catch (error) {
+        Swal.fire("Error", "Hubo un error al guardar los datos.", "error");
+        console.error("Error al guardar los datos:", error);
+      }
     },
     redirectToCreateUsuario() {
-      this.$router.push('/register');
-    }
-  }
+      this.$router.push("/register");
+    },
+  },
+  mounted() {
+    this.fetchUsers();
+  },
 };
 </script>
+
+
 
 <style scoped src="@/assets/styles/User/UserView.css"></style>
