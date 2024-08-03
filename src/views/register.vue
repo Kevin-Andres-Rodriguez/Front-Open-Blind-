@@ -44,7 +44,7 @@
           <label for="fechaNacimientoUsuario">Fecha de Nacimiento <span class="required">*</span></label>
           <input id="fechaNacimientoUsuario" type="date" placeholder="Fecha de Nacimiento" required v-model="form.fechaNacimientoUsuario">
         </div>
-        <button type="submit" class="custom-btn active">Registrarse</button>
+        <button type="submit" class="custom-btn">Registrarse</button>
         <router-link to="/" class="register-link">
           <i></i> <span class="register-button">Iniciar Sesión</span>
         </router-link>
@@ -66,46 +66,23 @@ export default {
         correoUsuario: '',
         contrasenaUsuario: '',
         telefonoUsuario: '',
-        fechaNacimientoUsuario: '',
+        fechaNacimientoUsuario: ''
       },
-      passwordVisible: false,
+      passwordVisible: false
     };
   },
   methods: {
     async register() {
       try {
-        // Enviar los datos del formulario al backend
-        const response = await axios.post('http://localhost:4200/usuario', this.form);
-        
-        // Mostrar mensaje de éxito
-        Swal.fire({
-          title: 'Usuario Creado',
-          text: 'El usuario ha sido creado exitosamente.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
-
-        // Limpiar el formulario
-        this.form = {
-          nombreUsuario: '',
-          apellidoUsuario: '',
-          correoUsuario: '',
-          contrasenaUsuario: '',
-          telefonoUsuario: '',
-          fechaNacimientoUsuario: '',
-        };
-
-        // Redirigir a otra página si es necesario
-        this.$router.push('/dashboard');
+        const response = await axios.post('http://localhost:4200/usuario/crear', this.form);
+        if (response.status === 200) {
+          Swal.fire('Éxito', 'Usuario creado con éxito', 'success');
+          this.$router.push('/');
+        } else {
+          Swal.fire('Error', 'Error al registrar el usuario', 'error');
+        }
       } catch (error) {
-        // Mostrar mensaje de error
-        Swal.fire({
-          title: 'Error',
-          text: 'Hubo un error al crear el usuario.',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-        console.error('Error al crear el usuario:', error);
+        Swal.fire('Error', 'Hubo un error al registrar el usuario', 'error');
       }
     },
     togglePassword() {
@@ -115,119 +92,5 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Estilos CSS del boton */
-.custom-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #034494;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f7f7f7;
-}
-
-.container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
-}
-
-.image-section {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.image-section img {
-  max-width: 130%;
-  max-height: 100%;
-}
-
-.login-section {
-  flex: 1;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-right: -20%;
-}
-
-.logo {
-  text-align: center;
-  margin-left: 85px;
-}
-
-.logo h1 {
-  font-size: 2.5em;
-  margin-right: 40px;
-}
-
-.logo .blind {
-  color: #d6d6d6;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  max-width: 330px;
-  margin-right: -15%;
-}
-
-.name-group {
-  display: flex;
-  gap: 10px;
-}
-
-input {
-  padding: 9px;
-  margin: 3px 0;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  background-color: #fff;
-  width: 100%;
-}
-
-.required {
-  color: red;
-}
-
-.password-input {
-  position: relative;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 10px;
-  top: 65%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.password-toggle i {
-  font-size: 20px;
-}
-
-.register-link {
-  text-align: center;
-  margin-top: 10px;
-}
-</style>
+<style scoped src="@/assets/styles/register.css"></style>

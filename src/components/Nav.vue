@@ -9,7 +9,7 @@
         </div>
         <div v-if="isOpen" class="dropdown-content">
           <router-link to="/create/User">Usuario</router-link>
-          <router-link to="/">Logout</router-link>
+          <router-link to="/" @click="logout">Cerrar sesión</router-link>
         </div>
       </div>
     </div>
@@ -21,18 +21,26 @@ export default {
   data() {
     return {
       isOpen: false,
-      username: 'Fatima',
-      userImage: 'https://cdn-icons-png.flaticon.com/128/4202/4202850.png',
+      username: '',
+      userImage: 'path/to/default/image.jpg' // Puedes cambiar esto por una imagen por defecto o eliminarlo si no es necesario
     };
   },
   methods: {
     toggleDropdown() {
       this.isOpen = !this.isOpen;
     },
-    closeDropdown() {
-      this.isOpen = false;
+    logout() {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      this.$router.push('/');
     }
   },
+  created() {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user) {
+      this.username = `${user.nombre} ${user.apellido}`;
+    }
+  }
 };
 </script>
 

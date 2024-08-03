@@ -6,19 +6,23 @@
       <h2>Usuarios</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input type="text" placeholder="Buscar..." v-model="searchQuery" />
+        <input
+          type="text"
+          placeholder="Buscar..."
+          v-model="searchQuery"
+        />
       </div>
     </div>
     <div class="table-container">
       <table>
         <thead>
           <tr>
-            <th><i class="fas fa-calendar-alt"></i> Date</th>
+            <th><i class="fas fa-calendar-alt"></i> Fecha</th>
             <th><i class="fas fa-user"></i> Nombres</th>
             <th><i class="fas fa-id-card-alt"></i> Apellidos</th>
             <th><i class="fas fa-at"></i> Correo</th>
             <th><i class="fas fa-phone-alt"></i> Teléfono</th>
-            <th><i class="fas fa-birthday-cake"></i> F.Nacimiento</th>
+            <th><i class="fas fa-birthday-cake"></i> F. Nacimiento</th>
             <th><i class="fas fa-circle text-danger"></i> Estado</th>
             <th><i class="fas fa-cogs"></i> Acciones</th>
           </tr>
@@ -27,22 +31,27 @@
           <tr v-if="filteredUsers.length === 0">
             <td colspan="8" class="text-center">Sin registros de Usuarios</td>
           </tr>
-          <tr v-for="user in filteredUsers" :key="user.id">
-            <td>{{ user.date }}</td>
+          <tr v-for="user in filteredUsers" :key="user.usuarioId">
+            <td>{{ user.createUser }}</td>
             <td>{{ user.nombreUsuario }}</td>
             <td>{{ user.apellidoUsuario }}</td>
             <td>{{ user.correoUsuario }}</td>
             <td>{{ user.telefonoUsuario }}</td>
             <td>{{ user.fechaNacimientoUsuario }}</td>
-            <td>{{ user.estado_usuario }}</td>
-            <td :class="{'status-active': user.estado_usuario === 'Activo', 'status-inactive': user.estado_usuario === 'Desactivado'}">
+            <td :class="{'status-active': user.estado_usuario, 'status-inactive': !user.estado_usuario}">
+              {{ user.estado_usuario ? 'Activo' : 'Desactivado' }}
+            </td>
+            <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', user)"></i>
+              <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(user.usuarioId)"></i> -->
             </td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <p>{{ filteredUsers.length }} resultados encontrados: Mostrando página 1 de 100</p>
+        <p>
+          {{ filteredUsers.length }} resultados encontrados: Mostrando página 1 de 100
+        </p>
         <button class="add-btn" @click="redirectToCreateUsuario">Agregar</button>
         <button>Previous</button>
         <button class="active">1</button>
@@ -59,28 +68,62 @@
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
             <label for="nombreUsuario" class="form-label">Nombres <span class="required">*</span>:</label>
-            <input type="text" id="nombreUsuario" v-model="form.nombreUsuario" class="form-control" required />
+            <input
+              type="text"
+              id="nombreUsuario"
+              v-model="form.nombreUsuario"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="apellidoUsuario" class="form-label">Apellidos <span class="required">*</span>:</label>
-            <input type="text" id="apellidoUsuario" v-model="form.apellidoUsuario" class="form-control" required />
+            <input
+              type="text"
+              id="apellidoUsuario"
+              v-model="form.apellidoUsuario"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="correoUsuario" class="form-label">Email <span class="required">*</span>:</label>
-            <input type="email" id="correoUsuario" v-model="form.correoUsuario" class="form-control" required />
+            <input
+              type="email"
+              id="correoUsuario"
+              v-model="form.correoUsuario"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="telefonoUsuario" class="form-label">Teléfono <span class="required">*</span>:</label>
-            <input type="text" id="telefonoUsuario" v-model="form.telefonoUsuario" class="form-control" required />
+            <input
+              type="text"
+              id="telefonoUsuario"
+              v-model="form.telefonoUsuario"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="fechaNacimientoUsuario" class="form-label">Fecha de Nacimiento <span class="required">*</span>:</label>
-            <input type="date" id="fechaNacimientoUsuario" v-model="form.fechaNacimientoUsuario" class="form-control" required />
+            <input
+              type="date"
+              id="fechaNacimientoUsuario"
+              v-model="form.fechaNacimientoUsuario"
+              class="form-control"
+              required
+            />
           </div>
           <div class="form-group">
             <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
             <label class="switch">
-              <input type="checkbox" v-model="form.estado_usuario" />
+              <input
+                type="checkbox"
+                id="estado_usuario"
+                v-model="form.estado_usuario"
+              />
               <span class="slider round"></span>
             </label>
           </div>
@@ -100,7 +143,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 export default {
-  name: "UserView",
+  name: "UsuariosView",
   components: {
     Navegation,
     Nav,
@@ -115,21 +158,23 @@ export default {
         usuarioId: null,
         nombreUsuario: "",
         apellidoUsuario: "",
-        telefonoUsuario: "",
         correoUsuario: "",
+        telefonoUsuario: "",
         fechaNacimientoUsuario: "",
-        estado_usuario: "Desactivado", // Valor predeterminado como texto
+        estado_usuario: false,
+        createUser: "",
       },
     };
   },
   computed: {
     filteredUsers() {
+      if (!this.searchQuery) {
+        return this.users;
+      }
       const query = this.searchQuery.trim().toLowerCase();
-      return this.users.filter(
-        (user) =>
-          user.nombreUsuario.toLowerCase().includes(query) ||
-          user.apellidoUsuario.toLowerCase().includes(query) ||
-          user.correoUsuario.toLowerCase().includes(query)
+      return this.users.filter((user) =>
+        user.nombreUsuario.toLowerCase().includes(query) ||
+        user.apellidoUsuario.toLowerCase().includes(query)
       );
     },
   },
@@ -137,96 +182,87 @@ export default {
     async fetchUsers() {
       try {
         const response = await axios.get("http://localhost:4200/usuario");
-        this.users = response.data.map(user => ({
-          ...user,
-          estado_usuario: user.estado_usuario === 1 ? "Activo" : "Desactivado" // Convertir estado al texto
-        }));
+        this.users = response.data;
       } catch (error) {
         console.error("Error al obtener los usuarios:", error);
       }
     },
-    formatDateForInput(date) {
-      if (!date) return "";
-      const d = new Date(date);
-      const year = d.getFullYear();
-      const month = ("0" + (d.getMonth() + 1)).slice(-2);
-      const day = ("0" + d.getDate()).slice(-2);
-      return `${year}-${month}-${day}`;
-    },
     openOffCanvas(action, user = null) {
-      this.offCanvasTitle = action === "add" ? "Agregar Usuario" : "Editar Usuario";
-      if (action === "edit" && user) {
-        this.form = {
-          usuarioId: user.usuarioId,
-          nombreUsuario:  user.nombreUsuario,
-          apellidoUsuario: user.apellidoUsuario,
-          telefonoUsuario: user.telefonoUsuario,
-          correoUsuario: user.correoUsuario,
-          fechaNacimientoUsuario: this.formatDateForInput(user.fechaNacimientoUsuario),
-          estado_usuario: user.estado_usuario, // Mantener como texto
-        };
-      } else {
-        this.form = {
-          usuarioId: null,
-          nombreUsuario: "",
-          apellidoUsuario: "",
-          telefonoUsuario: "",
-          correoUsuario: "",
-          fechaNacimientoUsuario: "",
-          estado_usuario: "Desactivado", // Valor predeterminado como texto
-        };
+      if (action === "edit") {
+        this.offCanvasTitle = "Editar Usuario";
+        this.form = { ...user };
+        this.isOffCanvasOpen = true;
       }
-      this.isOffCanvasOpen = true;
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-    async handleDeleteClick(usuarioId) {
-      try {
-        await Swal.fire({
-          title: "¿Estás seguro?",
-          text: "Esta acción eliminará el usuario.",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonText: "Sí, eliminar",
-          cancelButtonText: "Cancelar",
-        });
-        await axios.delete(`http://localhost:4200/usuario/${usuarioId}`);
-        this.users = this.users.filter((user) => user.usuarioId !== usuarioId);
-        Swal.fire("Eliminado!", "El usuario ha sido eliminado.", "success");
-      } catch (error) {
-        Swal.fire("Error", "Hubo un error al eliminar el usuario.", "error");
-        console.error("Error al eliminar el usuario:", error);
-      }
-    },
+
+    // FUNCIÓN PARA ELIMINAR 
+
+    // async handleDeleteClick(usuarioId) {
+    //   Swal.fire({
+    //     title: '¿Estás seguro?',
+    //     text: "¡No podrás revertir esto!",
+    //     icon: 'warning',
+    //     showCancelButton: true,
+    //     confirmButtonColor: '#3085d6',
+    //     cancelButtonColor: '#d33',
+    //     confirmButtonText: 'Sí, bórralo!'
+    //   }).then(async (result) => {
+    //     if (result.isConfirmed) {
+    //       try {
+    //         await axios.delete(`http://localhost:4200/usuarios/${usuarioId}`);
+    //         this.users = this.users.filter(user => user.usuarioId !== usuarioId);
+    //         Swal.fire('¡Borrado!', 'El usuario ha sido borrado.', 'success');
+    //       } catch (error) {
+    //         Swal.fire('Error', 'Hubo un error al borrar el usuario.', 'error');
+    //         console.error('Error al borrar el usuario:', error);
+    //       }
+    //     }
+    //   });
+    // },
     async submitForm() {
       try {
         if (this.form.usuarioId) {
-          await axios.put(`http://localhost:4200/usuario/${this.form.usuarioId}`, {
-            ...this.form,
-            estado_usuario: this.form.estado_usuario === "Activo" ? 1 : 0 // Convertir estado a número
-          });
-          const index = this.users.findIndex((user) => user.usuarioId === this.form.usuarioId);
+          // Actualizar un usuario existente
+          await axios.put(
+            `http://localhost:4200/usuario/${this.form.usuarioId}`,
+            this.form
+          );
+          const index = this.users.findIndex(
+            (u) => u.usuarioId === this.form.usuarioId
+          );
           if (index !== -1) {
-            this.users[index] = { ...this.form, estado_usuario: this.form.estado_usuario };
+            this.users[index] = { ...this.form };
+            Swal.fire(
+              "¡Actualizado!",
+              "El usuario ha sido actualizado.",
+              "success"
+            );
           }
-          Swal.fire("¡Actualizado!", "El usuario ha sido actualizado.", "success");
         } else {
-          await axios.post("http://localhost:4200/usuario", {
-            ...this.form,
-            estado_usuario: this.form.estado_usuario === "Activo" ? 1 : 0 // Convertir estado a número
-          });
-          this.users.push({ ...this.form, usuarioId: Date.now(), date: new Date().toLocaleDateString() });
-          Swal.fire("¡Guardado!", "El usuario ha sido agregado.", "success");
+          // Crear un nuevo usuario
+          await axios.post("http://localhost:4200/usuario", this.form);
+          this.users.push({ ...this.form, usuarioId: Date.now() }); // Simula un ID generado
+          Swal.fire(
+            "¡Registrado!",
+            "El usuario ha sido registrado.",
+            "success"
+          );
         }
         this.closeOffCanvas();
       } catch (error) {
-        Swal.fire("Error", "Hubo un error al guardar los datos.", "error");
-        console.error("Error al guardar los datos:", error);
+        Swal.fire(
+          "Error",
+          "Hubo un error al guardar el usuario.",
+          "error"
+        );
+        console.error("Error al guardar el usuario:", error);
       }
     },
     redirectToCreateUsuario() {
-      this.$router.push("/register");
+      this.openOffCanvas('create');
     },
   },
   mounted() {
