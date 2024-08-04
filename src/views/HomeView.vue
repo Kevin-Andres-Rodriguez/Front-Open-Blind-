@@ -41,7 +41,8 @@
     </div>
   </div>
 </template>
-  
+
+
   <script>
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -85,9 +86,6 @@ export default {
 };
 </script>
 
-<style scoped>
-/* Estilos CSS específicos para este componente */
-</style>
 
 
 <style scoped>

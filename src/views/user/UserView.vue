@@ -6,11 +6,7 @@
       <h2>Usuarios</h2>
       <div class="search-box">
         <i class="fas fa-search"></i>
-        <input
-          type="text"
-          placeholder="Buscar..."
-          v-model="searchQuery"
-        />
+        <input type="text" placeholder="Buscar..." v-model="searchQuery" />
       </div>
     </div>
     <div class="table-container">
@@ -38,8 +34,13 @@
             <td>{{ user.correoUsuario }}</td>
             <td>{{ user.telefonoUsuario }}</td>
             <td>{{ user.fechaNacimientoUsuario }}</td>
-            <td :class="{'status-active': user.estado_usuario, 'status-inactive': !user.estado_usuario}">
-              {{ user.estado_usuario ? 'Activo' : 'Desactivado' }}
+            <td
+              :class="{
+                'status-active': user.estado_usuario,
+                'status-inactive': !user.estado_usuario,
+              }"
+            >
+              {{ user.estado_usuario ? "Activo" : "Desactivado" }}
             </td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', user)"></i>
@@ -50,9 +51,12 @@
       </table>
       <div class="pagination">
         <p>
-          {{ filteredUsers.length }} resultados encontrados: Mostrando página 1 de 100
+          {{ filteredUsers.length }} resultados encontrados: Mostrando página 1
+          de 100
         </p>
-        <button class="add-btn" @click="redirectToCreateUsuario">Agregar</button>
+        <button class="add-btn" @click="redirectToCreateUsuario">
+          Agregar
+        </button>
         <button>Previous</button>
         <button class="active">1</button>
         <button>2</button>
@@ -67,7 +71,9 @@
       <div class="off-canvas-body">
         <form @submit.prevent="submitForm" class="form">
           <div class="form-group">
-            <label for="nombreUsuario" class="form-label">Nombres <span class="required">*</span>:</label>
+            <label for="nombreUsuario" class="form-label"
+              >Nombres <span class="required">*</span>:</label
+            >
             <input
               type="text"
               id="nombreUsuario"
@@ -77,7 +83,9 @@
             />
           </div>
           <div class="form-group">
-            <label for="apellidoUsuario" class="form-label">Apellidos <span class="required">*</span>:</label>
+            <label for="apellidoUsuario" class="form-label"
+              >Apellidos <span class="required">*</span>:</label
+            >
             <input
               type="text"
               id="apellidoUsuario"
@@ -87,7 +95,9 @@
             />
           </div>
           <div class="form-group">
-            <label for="correoUsuario" class="form-label">Email <span class="required">*</span>:</label>
+            <label for="correoUsuario" class="form-label"
+              >Email <span class="required">*</span>:</label
+            >
             <input
               type="email"
               id="correoUsuario"
@@ -97,7 +107,9 @@
             />
           </div>
           <div class="form-group">
-            <label for="telefonoUsuario" class="form-label">Teléfono <span class="required">*</span>:</label>
+            <label for="telefonoUsuario" class="form-label"
+              >Teléfono <span class="required">*</span>:</label
+            >
             <input
               type="text"
               id="telefonoUsuario"
@@ -107,7 +119,9 @@
             />
           </div>
           <div class="form-group">
-            <label for="fechaNacimientoUsuario" class="form-label">Fecha de Nacimiento <span class="required">*</span>:</label>
+            <label for="fechaNacimientoUsuario" class="form-label"
+              >Fecha de Nacimiento <span class="required">*</span>:</label
+            >
             <input
               type="date"
               id="fechaNacimientoUsuario"
@@ -117,7 +131,9 @@
             />
           </div>
           <div class="form-group">
-            <label for="estado_usuario" class="form-label">Estado <span class="required">*</span>:</label>
+            <label for="estado_usuario" class="form-label"
+              >Estado <span class="required">*</span>:</label
+            >
             <label class="switch">
               <input
                 type="checkbox"
@@ -172,9 +188,10 @@ export default {
         return this.users;
       }
       const query = this.searchQuery.trim().toLowerCase();
-      return this.users.filter((user) =>
-        user.nombreUsuario.toLowerCase().includes(query) ||
-        user.apellidoUsuario.toLowerCase().includes(query)
+      return this.users.filter(
+        (user) =>
+          user.nombreUsuario.toLowerCase().includes(query) ||
+          user.apellidoUsuario.toLowerCase().includes(query)
       );
     },
   },
@@ -191,6 +208,10 @@ export default {
       if (action === "edit") {
         this.offCanvasTitle = "Editar Usuario";
         this.form = { ...user };
+        // Asegúrate de que la fecha de nacimiento esté en formato YYYY-MM-DD
+        this.form.fechaNacimientoUsuario = user.fechaNacimientoUsuario
+          ? new Date(user.fechaNacimientoUsuario).toISOString().split("T")[0]
+          : "";
         this.isOffCanvasOpen = true;
       }
     },
@@ -198,7 +219,7 @@ export default {
       this.isOffCanvasOpen = false;
     },
 
-    // FUNCIÓN PARA ELIMINAR 
+    // FUNCIÓN PARA ELIMINAR
 
     // async handleDeleteClick(usuarioId) {
     //   Swal.fire({
@@ -253,16 +274,12 @@ export default {
         }
         this.closeOffCanvas();
       } catch (error) {
-        Swal.fire(
-          "Error",
-          "Hubo un error al guardar el usuario.",
-          "error"
-        );
+        Swal.fire("Error", "Hubo un error al guardar el usuario.", "error");
         console.error("Error al guardar el usuario:", error);
       }
     },
     redirectToCreateUsuario() {
-      this.openOffCanvas('create');
+      this.openOffCanvas("create");
     },
   },
   mounted() {
@@ -270,7 +287,5 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped src="@/assets/styles/User/UserView.css"></style>

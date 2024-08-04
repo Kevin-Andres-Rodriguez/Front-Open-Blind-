@@ -36,6 +36,13 @@ import Dashboard from "@/views/dashboard/Dashboard.vue";
 //Import REGISTRO
 import Register from "@/views/register.vue";
 
+//Import ERROR 
+import Error  from "@/views/error/error.vue";
+
+function isAuthenticated() {
+  return !!localStorage.getItem('token'); // Verifica si el token existe en localStorage
+}
+
 const routes = [
   {
     path: "/",
@@ -48,16 +55,19 @@ const routes = [
     path: "/create/Ruta",
     name: "createRuta",
     component: RutaNew,
+    meta: { requiresAuth: true }
   },
   {
     path: "/edit/Ruta/:id",
     name: "editRuta",
     component: RutaEdit,
+    meta: { requiresAuth: true }
   },
   {
     path: "/view/Ruta",
     name: "viewRuta",
     component: RutaView,
+    meta: { requiresAuth: true }
   },
 
   //Route MENSAJE PERSONALIZADO
@@ -65,16 +75,19 @@ const routes = [
     path: "/create/MensajePersonalizado",
     name: "createMensajePersonalizado",
     component: MensajePersonalizadoNew,
+    meta: { requiresAuth: true }
   },
   {
     path: "/editMensaje/Personalizado/:id",
     name: "editMensajePersonalizado",
     component: MensajePersonalizadoEdit,
+    meta: { requiresAuth: true }
   },
   {
     path: "/viewMensaje/Personalizado",
     name: "viewMensajePersonalizado",
     component: MensajePersonalizadoView,
+    meta: { requiresAuth: true }
   },
 
   //Route GUIA DE VOZ
@@ -82,16 +95,19 @@ const routes = [
     path: "/create/GuiaVoz",
     name: "createGuiaVoz",
     component: GuiaVozNew,
+    meta: { requiresAuth: true }
   },
   {
     path: "/editGuia/Voz/:id",
     name: "editGuiaVoz",
     component: GuiaVozEdit,
+    meta: { requiresAuth: true }
   },
   {
     path: "/view/GuiaVoz",
     name: "viewGuiaVoz",
     component: GuiaVozView,
+    meta: { requiresAuth: true }
   },
 
   //Route PUNTO DE INTERES
@@ -99,16 +115,19 @@ const routes = [
     path: "/create/PuntoInteres",
     name: "createPuntoInteres",
     component: PuntoInteresNew,
+    meta: { requiresAuth: true }
   },
   {
     path: "/edit/PuntoInteres/:id",
     name: "editPuntoInteres",
     component: PuntoInteresEdit,
+    meta: { requiresAuth: true }
   },
   {
     path: "/view/PuntoInteres",
     name: "viewPuntoInteres",
     component: PuntoInteresView,
+    meta: { requiresAuth: true }
   },
 
   //Route ESTACION DE METRO
@@ -116,27 +135,32 @@ const routes = [
     path: "/create/EstacionMetro",
     name: "createEstacionMetro",
     component: EstacionMetroNew,
+    meta: { requiresAuth: true }
   },
   {
     path: "/edit/EstacionMetro/:id",
     name: "editEstacionMetro",
     component: EstacionMetroEdit,
+    meta: { requiresAuth: true }
   },
   {
     path: "/view/EstacionMetro",
     name: "viewEstacionMetro",
     component: EstacionMetroView,
+    meta: { requiresAuth: true }
   },
   //Route USER
   {
     path: "/create/User",
     name: "createUser",
     component: UserNew,
+    meta: { requiresAuth: true }
   },
   {
     path: "/edit/User/:id",
     name: "editUser",
     component: UserEdit,
+    meta: { requiresAuth: true }
   },
   {
     path: "/view/User",
@@ -148,6 +172,7 @@ const routes = [
     path: "/dashboard",
     name: "dashboard",
     component: Dashboard,
+    meta: { requiresAuth: true }
   },
   //Route REGISTRO
   {
@@ -155,11 +180,29 @@ const routes = [
     name: "register",
     component: Register
   },
+  //Router ERROR
+  {
+    path: "/access-denied",
+    name: "error",
+    component: Error
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated()) {
+      next({ path: '/access-denied', query: { redirect: to.fullPath } });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
