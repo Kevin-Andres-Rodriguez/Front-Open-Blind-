@@ -73,6 +73,13 @@ export default {
   },
   methods: {
     async register() {
+      // Validación de la contraseña
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(this.form.contrasenaUsuario)) {
+        Swal.fire('Error', 'La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, números y caracteres especiales.', 'error');
+        return;
+      }
+
       try {
         const response = await axios.post('http://localhost:4200/usuario/crear', this.form);
         if (response.status === 200) {
