@@ -72,11 +72,35 @@ export default {
     };
   },
   methods: {
+    async verificarCorreo() {
+    try {
+        const response = await axios.get('http://localhost:4200/usuario/verificar-correo', {
+            params: { correoUsuario: this.form.correoUsuario }
+        });
+        if (response.status === 200) {
+            Swal.fire('Error', 'El correo electrónico ya está registrado.', 'error');
+            return false;
+        }
+        return true;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return true; // Correo disponible
+        }
+        Swal.fire('Error', 'Hubo un error al verificar el correo.', 'error');
+        return false;
+    }
+},
     async register() {
       // Validación de la contraseña
       const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!passwordRegex.test(this.form.contrasenaUsuario)) {
         Swal.fire('Error', 'La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, números y caracteres especiales.', 'error');
+        return;
+      }
+
+      // Verifica la disponibilidad del correo antes de registrar
+      const isEmailAvailable = await this.verificarCorreo();
+      if (!isEmailAvailable) {
         return;
       }
 
