@@ -20,7 +20,7 @@
             <th><i class="fas fa-phone-alt"></i> Teléfono</th>
             <th><i class="fas fa-birthday-cake"></i> F. Nacimiento</th>
             <th><i class="fas fa-circle text-danger"></i> Estado</th>
-            <th><i class="fas fa-cogs"></i> Acciones</th>
+            <th><i class="fas fa-cogs"></i> </th>
           </tr>
         </thead>
         <tbody>
@@ -33,7 +33,7 @@
             <td>{{ user.apellidoUsuario }}</td>
             <td>{{ user.correoUsuario }}</td>
             <td>{{ user.telefonoUsuario }}</td>
-            <td>{{ user.fechaNacimientoUsuario }}</td>
+            <td>{{ formatDate(user.fechaNacimientoUsuario) }}</td>
             <td
               :class="{
                 'status-active': user.estado_usuario,
@@ -213,36 +213,28 @@ export default {
           ? new Date(user.fechaNacimientoUsuario).toISOString().split("T")[0]
           : "";
         this.isOffCanvasOpen = true;
+      } else if (action === "create") {
+        this.offCanvasTitle = "Agregar Usuario";
+        this.form = {
+          usuarioId: null,
+          nombreUsuario: "",
+          apellidoUsuario: "",
+          correoUsuario: "",
+          telefonoUsuario: "",
+          fechaNacimientoUsuario: "",
+          estado_usuario: false,
+          createUser: "",
+        };
+        this.isOffCanvasOpen = true;
       }
     },
     closeOffCanvas() {
       this.isOffCanvasOpen = false;
     },
-
-    // FUNCIÓN PARA ELIMINAR
-
-    // async handleDeleteClick(usuarioId) {
-    //   Swal.fire({
-    //     title: '¿Estás seguro?',
-    //     text: "¡No podrás revertir esto!",
-    //     icon: 'warning',
-    //     showCancelButton: true,
-    //     confirmButtonColor: '#3085d6',
-    //     cancelButtonColor: '#d33',
-    //     confirmButtonText: 'Sí, bórralo!'
-    //   }).then(async (result) => {
-    //     if (result.isConfirmed) {
-    //       try {
-    //         await axios.delete(`http://localhost:4200/usuarios/${usuarioId}`);
-    //         this.users = this.users.filter(user => user.usuarioId !== usuarioId);
-    //         Swal.fire('¡Borrado!', 'El usuario ha sido borrado.', 'success');
-    //       } catch (error) {
-    //         Swal.fire('Error', 'Hubo un error al borrar el usuario.', 'error');
-    //         console.error('Error al borrar el usuario:', error);
-    //       }
-    //     }
-    //   });
-    // },
+    formatDate(dateString) {
+      if (!dateString) return "";
+      return new Date(dateString).toISOString().split("T")[0];
+    },
     async submitForm() {
       try {
         if (this.form.usuarioId) {
@@ -279,7 +271,7 @@ export default {
       }
     },
     redirectToCreateUsuario() {
-      this.openOffCanvas("create");
+      this.$router.push("/register");
     },
   },
   mounted() {

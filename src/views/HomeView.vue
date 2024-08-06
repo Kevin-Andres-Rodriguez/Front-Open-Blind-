@@ -89,7 +89,7 @@ export default {
 
 
 <style scoped>
-/* Estilos CSS del boton */
+/* Estilos CSS del botón */
 button {
   margin-top: 10px;
   padding: 10px;
@@ -165,6 +165,18 @@ input {
   border: 1px solid #ddd;
   border-radius: 9px;
   background-color: #dadada;
+  width: 100%;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 59%;
+  right: 161px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #007bff;
 }
 
 .register-link {

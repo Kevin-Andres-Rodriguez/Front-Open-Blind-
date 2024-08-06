@@ -5,13 +5,9 @@
     <div class="profile" v-if="user">
       <h2>Información del Usuario</h2>
       <div class="profile-info">
-        <div class="profile-picture">
-          <img src="https://cdn-icons-png.flaticon.com/128/4202/4202850.png" alt="Profile Picture" />
-        </div>
         <div class="profile-details">
           <p>{{ user.nombre }}</p>
           <p>Usuario {{ user.rol }} de la página OpenBlind</p>
-          <p>Dirección: Quito, 12 de diciembre y roca</p>
         </div>
       </div>
       <div class="additional-info">

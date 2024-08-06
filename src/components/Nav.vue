@@ -5,7 +5,6 @@
       <div class="dropdown" @click="toggleDropdown">
         <div class="user-info">
           <span>{{ username }}</span>
-          <img :src="userImage" alt="User Image" class="user-image">
         </div>
         <div v-if="isOpen" class="dropdown-content">
           <router-link to="/create/User">Usuario</router-link>
