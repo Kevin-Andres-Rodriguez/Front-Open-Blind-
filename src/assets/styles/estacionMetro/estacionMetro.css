@@ -335,3 +335,9 @@
     background-color: #0056b3;
     color: #ddd;
   }
+  .error-message {
+    color: #dc3545; /* Rojo para los mensajes de error */
+    font-size: 0.875em;
+    margin-top: 5px;
+  }
+  

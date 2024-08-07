@@ -9,22 +9,26 @@
       <form @submit.prevent="submitForm" class="form">        
         <div class="form-group">
           <label for="nombrePunto" class="form-label">Nombre <span class="required">*</span>:</label>
-          <input type="text" id="nombrePunto" v-model="form.nombrePunto" class="form-control" required>
+          <input type="text" id="nombrePunto" v-model="form.nombrePunto" class="form-control" @blur="validateNombrePunto" required>
+          <div v-if="errors.nombrePunto" class="error-message">{{ errors.nombrePunto }}</div>
         </div>
         <div class="form-group">
           <label for="descripcionPunto" class="form-label">Descripción <span class="required">*</span>:</label>
-          <textarea id="descripcionPunto" v-model="form.descripcionPunto" class="form-control" rows="2" required></textarea>
+          <textarea id="descripcionPunto" v-model="form.descripcionPunto" class="form-control" rows="2" @blur="validateDescripcionPunto" required></textarea>
+          <div v-if="errors.descripcionPunto" class="error-message">{{ errors.descripcionPunto }}</div>
         </div>
         <div class="form-group">
           <label for="ubicacionPunto" class="form-label">Ubicación <span class="required">*</span>:</label>
-          <input type="text" id="ubicacionPunto" v-model="form.ubicacionPunto" class="form-control" required>
+          <input type="text" id="ubicacionPunto" v-model="form.ubicacionPunto" class="form-control" @blur="validateUbicacionPunto" required>
+          <div v-if="errors.ubicacionPunto" class="error-message">{{ errors.ubicacionPunto }}</div>
         </div>
         <div class="form-group">
           <label for="estadoPunto" class="form-label">Estado <span class="required">*</span>:</label>
-          <input type="text" id="estadoPunto" v-model="form.estadoPunto" class="form-control" required>
+          <input type="text" id="estadoPunto" v-model="form.estadoPunto" class="form-control" @blur="validateEstadoPunto" required>
+          <div v-if="errors.estadoPunto" class="error-message">{{ errors.estadoPunto }}</div>
         </div>
         <div class="form-group-button">
-          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="submit" class="btn btn-primary" @click="validateForm">Guardar</button>
         </div>
       </form>
     </div>
@@ -50,42 +54,103 @@ export default {
         descripcionPunto: '',
         ubicacionPunto: '',
         estadoPunto: ''
+      },
+      errors: {
+        nombrePunto: null,
+        descripcionPunto: null,
+        ubicacionPunto: null,
+        estadoPunto: null
       }
     };
   },
   methods: {
+    validateNombrePunto() {
+      if (!this.form.nombrePunto) {
+        this.errors.nombrePunto = 'El nombre es obligatorio.';
+      } else if (this.form.nombrePunto.length < 5) {
+        this.errors.nombrePunto = 'El nombre debe tener al menos 5 caracteres.';
+      } else {
+        this.errors.nombrePunto = null;
+      }
+    },
+    validateDescripcionPunto() {
+      if (!this.form.descripcionPunto) {
+        this.errors.descripcionPunto = 'La descripción es obligatoria.';
+      } else if (this.form.descripcionPunto.length < 5) {
+        this.errors.descripcionPunto = 'La descripción debe tener al menos 5 caracteres.';
+      } else {
+        this.errors.descripcionPunto = null;
+      }
+    },
+    validateUbicacionPunto() {
+      if (!this.form.ubicacionPunto) {
+        this.errors.ubicacionPunto = 'La ubicación es obligatoria.';
+      } else if (this.form.ubicacionPunto.length < 5) {
+        this.errors.ubicacionPunto = 'La ubicación debe tener al menos 5 caracteres.';
+      } else {
+        this.errors.ubicacionPunto = null;
+      }
+    },
+    validateEstadoPunto() {
+      if (!this.form.estadoPunto) {
+        this.errors.estadoPunto = 'El estado es obligatorio.';
+      } else if (this.form.estadoPunto.length < 5) {
+        this.errors.estadoPunto = 'El estado debe tener al menos 5 caracteres.';
+      } else {
+        this.errors.estadoPunto = null;
+      }
+    },
+    validateForm() {
+      this.validateNombrePunto();
+      this.validateDescripcionPunto();
+      this.validateUbicacionPunto();
+      this.validateEstadoPunto();
+
+      return !this.errors.nombrePunto && !this.errors.descripcionPunto && !this.errors.ubicacionPunto && !this.errors.estadoPunto;
+    },
     async submitForm() {
-      try {
-        // Enviar los datos del formulario al backend
-        const response = await axios.post('http://localhost:4200/puntoInteres', this.form);
+  
+      if (this.validateForm()) {
+        try {
+          // Enviar los datos del formulario al backend
+          const response = await axios.post('http://localhost:4200/puntoInteres', this.form);
 
-        // Mostrar mensaje de éxito
-        Swal.fire({
-          title: 'Punto de Interés Creado',
-          text: 'El punto de interés ha sido creado exitosamente.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
+          // Mostrar mensaje de éxito
+          Swal.fire({
+            title: 'Punto de Interés Creado',
+            text: 'El punto de interés ha sido creado exitosamente.',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
 
-        // Limpiar el formulario
-        this.form = {
-          nombrePunto: '',
-          descripcionPunto: '',
-          ubicacionPunto: '',
-          estadoPunto: ''
-        };
+          // Limpiar el formulario
+          this.form = {
+            nombrePunto: '',
+            descripcionPunto: '',
+            ubicacionPunto: '',
+            estadoPunto: ''
+          };
 
-        // Redirigir a otra página si es necesario
-        // this.$router.push('/ruta-a-donde-redirigir');
-      } catch (error) {
-        // Mostrar mensaje de error
+          // Redirigir a otra página si es necesario
+          // this.$router.push('/ruta-a-donde-redirigir');
+        } catch (error) {
+          // Mostrar mensaje de error
+          Swal.fire({
+            title: 'Error',
+            text: 'Hubo un error al crear el punto de interés.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+          console.error('Error al crear el punto de interés:', error);
+        }
+      } else {
+        // Mostrar mensaje de error de validación
         Swal.fire({
           title: 'Error',
-          text: 'Hubo un error al crear el punto de interés.',
+          text: 'Por favor, corrija los errores en el formulario antes de enviarlo.',
           icon: 'error',
           confirmButtonText: 'OK'
         });
-        console.error('Error al crear el punto de interés:', error);
       }
     }
   }

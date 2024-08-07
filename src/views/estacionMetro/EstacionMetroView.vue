@@ -13,7 +13,7 @@
       <table>
         <thead>
           <tr>
-            <th><i class="fas fa-calendar-alt"></i> Date</th>
+            <th><i class="fas fa-calendar-alt"></i> Fecha</th>
             <th><i class="fas fa-subway"></i> Nombre de la estación</th>
             <th><i class="fas fa-align-left"></i> Descripción</th>
             <th><i class="fas fa-map-marker-alt"></i> Ubicación</th>
@@ -33,7 +33,6 @@
             <td>{{ estacion.descripcionEstacion }}</td>
             <td>{{ estacion.ubicacionEstacion }}</td>
             <td>{{ estacion.estadoEstacion }}</td>
-
             <td class="actions">
               <i
                 class="fas fa-edit"
@@ -71,8 +70,10 @@
               id="nombre_estacion"
               v-model="form.nombreEstacion"
               class="form-control"
+              @blur="validateNombreEstacion"
               required
             />
+            <div v-if="errors.nombreEstacion" class="error-message">{{ errors.nombreEstacion }}</div>
           </div>
           <div class="form-group">
             <label for="descripcion_estacion" class="form-label"
@@ -83,8 +84,10 @@
               id="descripcion_estacion"
               v-model="form.descripcionEstacion"
               class="form-control"
+              @blur="validateDescripcionEstacion"
               required
             />
+            <div v-if="errors.descripcionEstacion" class="error-message">{{ errors.descripcionEstacion }}</div>
           </div>
           <div class="form-group">
             <label for="ubicacion_estacion" class="form-label"
@@ -95,22 +98,25 @@
               id="ubicacion_estacion"
               v-model="form.ubicacionEstacion"
               class="form-control"
+              @blur="validateUbicacionEstacion"
               required
             />
+            <div v-if="errors.ubicacionEstacion" class="error-message">{{ errors.ubicacionEstacion }}</div>
           </div>
           <div class="form-group">
-            <label for="ubicacion_estacion" class="form-label"
+            <label for="estado_estacion" class="form-label"
               >Estado <span class="required">*</span>:</label
             >
             <input
               type="text"
-              id="estadoEstacion"
+              id="estado_estacion"
               v-model="form.estadoEstacion"
               class="form-control"
+              @blur="validateEstadoEstacion"
               required
             />
+            <div v-if="errors.estadoEstacion" class="error-message">{{ errors.estadoEstacion }}</div>
           </div>
-
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>
           </div>
@@ -145,6 +151,12 @@ export default {
         ubicacionEstacion: "",
         estadoEstacion: "",
       },
+      errors: {
+        nombreEstacion: null,
+        descripcionEstacion: null,
+        ubicacionEstacion: null,
+        estadoEstacion: null,
+      },
     };
   },
   computed: {
@@ -171,6 +183,17 @@ export default {
       if (action === "edit") {
         this.offCanvasTitle = "Editar Estación";
         this.form = { ...estacion };
+        this.isOffCanvasOpen = true;
+      } else if (action === "add") {
+        this.offCanvasTitle = "Agregar Estación";
+        this.form = {
+          estacionId: null,
+          nombreEstacion: "",
+          descripcionEstacion: "",
+          ubicacionEstacion: "",
+          estadoEstacion: "",
+        };
+        this.errors = {}; // Reset errors
         this.isOffCanvasOpen = true;
       }
     },
@@ -202,27 +225,86 @@ export default {
     //});
     //},
 
+    validateNombreEstacion() {
+      if (!this.form.nombreEstacion) {
+        this.errors.nombreEstacion = "El nombre de la estación es obligatorio.";
+      } else if (this.form.nombreEstacion.length < 5) {
+        this.errors.nombreEstacion = "El nombre debe tener al menos 5 caracteres.";
+      } else {
+        this.errors.nombreEstacion = null;
+      }
+    },
+    validateDescripcionEstacion() {
+      if (!this.form.descripcionEstacion) {
+        this.errors.descripcionEstacion = "La descripción es obligatoria.";
+      } else if (this.form.descripcionEstacion.length < 5) {
+        this.errors.descripcionEstacion = "La descripción debe tener al menos 5 caracteres.";
+      } else {
+        this.errors.descripcionEstacion = null;
+      }
+    },
+    validateUbicacionEstacion() {
+      if (!this.form.ubicacionEstacion) {
+        this.errors.ubicacionEstacion = "La ubicación es obligatoria.";
+      } else if (this.form.ubicacionEstacion.length < 5) {
+        this.errors.ubicacionEstacion = "La ubicación debe tener al menos 5 caracteres.";
+      } else {
+        this.errors.ubicacionEstacion = null;
+      }
+    },
+    validateEstadoEstacion() {
+      if (!this.form.estadoEstacion) {
+        this.errors.estadoEstacion = "El estado es obligatorio.";
+      } else if (this.form.estadoEstacion.length < 5) {
+        this.errors.estadoEstacion = "El estado debe tener al menos 5 caracteres.";
+      } else {
+        this.errors.estadoEstacion = null;
+      }
+    },
+    validateForm() {
+      this.validateNombreEstacion();
+      this.validateDescripcionEstacion();
+      this.validateUbicacionEstacion();
+      this.validateEstadoEstacion();
+
+      return !this.errors.nombreEstacion && !this.errors.descripcionEstacion && !this.errors.ubicacionEstacion && !this.errors.estadoEstacion;
+    },
     async submitForm() {
-      try {
-        await axios.put(
-          `http://localhost:4200/estacion/${this.form.estacionId}`,
-          this.form
-        );
-        const index = this.estaciones.findIndex(
-          (e) => e.estacionId === this.form.estacionId
-        );
-        if (index !== -1) {
-          this.estaciones[index] = { ...this.form };
-          Swal.fire(
-            "¡Actualizado!",
-            "La estación ha sido actualizada.",
-            "success"
-          );
+      if (this.validateForm()) {
+        try {
+          if (this.form.estacionId) {
+            // Actualizar una estación existente
+            await axios.put(
+              `http://localhost:4200/estacion/${this.form.estacionId}`,
+              this.form
+            );
+            const index = this.estaciones.findIndex(
+              (e) => e.estacionId === this.form.estacionId
+            );
+            if (index !== -1) {
+              this.estaciones[index] = { ...this.form };
+              Swal.fire(
+                "¡Actualizado!",
+                "La estación ha sido actualizada.",
+                "success"
+              );
+            }
+          } else {
+            // Crear una nueva estación
+            const response = await axios.post(
+              "http://localhost:4200/estacion",
+              this.form
+            );
+            this.estaciones.push(response.data);
+            Swal.fire("¡Creado!", "La estación ha sido creada.", "success");
+          }
+          this.closeOffCanvas();
+        } catch (error) {
+          Swal.fire("Error", "Hubo un error al guardar la estación.", "error");
+          console.error("Error al guardar la estación:", error);
         }
-        this.closeOffCanvas();
-      } catch (error) {
-        Swal.fire("Error", "Hubo un error al actualizar la estación.", "error");
-        console.error("Error al actualizar la estación:", error);
+      } else {
+        Swal.fire("Error", "Por favor, corrija los errores en el formulario antes de enviarlo.", "error");
       }
     },
     redirectToCreateEstacion() {
@@ -234,5 +316,4 @@ export default {
   },
 };
 </script>
-
 <style scoped src="@/assets/styles/estacionMetro/estacionMetro.css"></style>
