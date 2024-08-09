@@ -1,7 +1,9 @@
 <template>
   <Navegation />
   <div class="content">
-    <Nav />
+    <div class="nav">
+      <Nav />
+    </div>
     <div class="form-container">
       <form @submit.prevent="submitForm" class="form">
         <br>
@@ -155,5 +157,32 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* Estilos generales para pantallas normales */
+.nav {
+  width: 100%;
+}
+
+/* Estilos específicos para pantallas pequeñas (responsive) */
+@media (max-width: 768px) {
+  .nav {
+    position: fixed; /* Fijar en la parte superior */
+    top: -9%; /* Alineado al principio de la página */
+    left: 65%; /* Centrando horizontalmente */
+    transform: translateX(-50%); /* Ajusta el centro */
+    width: 100%;
+    max-width: 600px; /* Limitar el ancho máximo */
+    z-index: 10; /* Asegura que esté encima del contenido */
+
+    padding: 1px; /* Ajusta el padding si es necesario */
+  }
+
+  .content {
+    margin-top: 80px; /* Añadir espacio suficiente en la parte superior para el nav */
+    position: relative;
+  }
+}
+</style>
 
 <style scoped src="@/assets/styles/estacionMetro/estacionMetroNew.css"></style>
