@@ -1,8 +1,12 @@
 <template>
   <Navegation />
-  
+
   <div class="content">
-    <Nav />
+    <div class="nav">
+      <Nav />
+
+    </div>
+  
 
     <div class="info-container">
       <p>
@@ -88,6 +92,35 @@ export default {
   },
 };
 </script>
+
+
+<style scoped>
+/* Estilos generales para pantallas normales */
+.nav {
+  width: 100%;
+}
+
+/* Estilos específicos para pantallas pequeñas (responsive) */
+@media (max-width: 768px) {
+  .nav {
+    position: absolute; /* Fijar en la parte superior */
+    top: -4.2%; /* Alineado al principio de la página */
+    left: 56.6%; /* Centrando horizontalmente */
+    transform: translateX(-50%); /* Ajusta el centro */
+    width: 100%;
+    max-width: 600px; /* Limitar el ancho máximo */
+    z-index: 10; /* Asegura que esté encima del contenido */
+
+    padding: 1px; /* Ajusta el padding si es necesario */
+  }
+
+  .content {
+    margin-top: 80px; /* Añadir espacio suficiente en la parte superior para el nav */
+    position: relative;
+  }
+}
+</style>
+
 
 <style scoped src="@/assets/styles/dashboard/dashboard.css"></style>
 

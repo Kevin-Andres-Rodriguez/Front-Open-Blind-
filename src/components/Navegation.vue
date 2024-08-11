@@ -12,7 +12,9 @@
         </h1>
       </div>
       <button @click="toggleSidebar" class="toggle-btn">
-        <i :class="['fas', isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left']"></i>
+        <i
+          :class="['fas', isCollapsed ? 'fa-chevron-right' : 'fa-chevron-left']"
+        ></i>
       </button>
       <nav>
         <ul>
@@ -59,15 +61,25 @@
             </router-link>
           </li>
           <li class="submenu">
-            <router-link to="/dashboard">
+            <router-link to="">
               <i class="fas fa-history"></i>
               <span v-if="!isCollapsed">Historial</span>
             </router-link>
             <ul v-if="!isCollapsed">
               <li><router-link to="/view/user">Usuarios</router-link></li>
-              <li><router-link to="/view/EstacionMetro">Estaciones</router-link></li>
-              <li><router-link to="/view/PuntoInteres">Puntos de Interés</router-link></li>
-              <li><router-link to="/viewMensaje/Personalizado">Mensajes Personalizados</router-link></li>
+              <li>
+                <router-link to="/view/EstacionMetro">Estaciones</router-link>
+              </li>
+              <li>
+                <router-link to="/view/PuntoInteres"
+                  >Puntos de Interés</router-link
+                >
+              </li>
+              <li>
+                <router-link to="/viewMensaje/Personalizado"
+                  >Mensajes Personalizados</router-link
+                >
+              </li>
               <li><router-link to="/view/Ruta">Rutas</router-link></li>
               <li><router-link to="/view/GuiaVoz">Guía de Voz</router-link></li>
             </ul>
@@ -78,7 +90,6 @@
     <router-view />
   </div>
 </template>
-
 
 <script>
 export default {
@@ -124,6 +135,14 @@ body {
   flex: 0 0 60px;
 }
 
+.sidebar nav ul li a span {
+  display: inline-block;
+}
+
+.sidebar-collapsed nav ul li a span {
+  display: none;
+}
+
 .logo {
   text-align: center;
   padding-bottom: 20px;
@@ -138,30 +157,30 @@ body {
 
 .logo .open {
   font-weight: bold;
-  color: black; /* Negro */
+  color: black;
   font-size: 1em;
   display: block;
   line-height: 0.8em;
 }
 
 .logo .blind {
-  color: gray; 
+  color: gray;
   font-size: 1em;
   display: block;
-  margin-left:60px; 
-  margin-top: 5px; 
+  margin-left: 60px;
+  margin-top: 5px;
 }
 
 .logo .open-collapsed {
   font-weight: bold;
-  color: black; 
+  color: black;
   font-size: 1.2em;
   display: block;
   line-height: 0.8em;
 }
 
 .logo .blind-collapsed {
-  color: gray; /* Gris */
+  color: gray;
   font-size: 1.2em;
   display: block;
 }
@@ -223,7 +242,7 @@ nav ul li a:hover {
 }
 
 .submenu ul li::before {
-  content: '-';
+  content: "-";
   position: absolute;
   left: 0;
   color: #000000;
@@ -238,102 +257,55 @@ nav ul li a:hover {
   display: block;
   margin-top: 20px;
 }
-
 /* Estilos responsivos */
-@media (max-width: 1024px) {
-  .sidebar {
-    flex: 0 0 180px;
-  }
 
-  .logo h1 {
-    font-size: 1.8em;
-  }
-
-  .logo .open, .logo .blind,
-  .logo .open-collapsed, .logo .blind-collapsed {
-    font-size: 0.9em;
-  }
-
-  nav ul li {
-    padding-left: 15px;
-  }
-
-  nav ul li a {
-    font-size: 15px;
-  }
-}
-
+/* Media query para pantallas pequeñas */
+/* Media query para pantallas pequeñas */
+/* Media query para pantallas pequeñas */
 @media (max-width: 768px) {
   .sidebar {
-    flex: 0 0 140px;
+    background: transparent; /* Fondo negro con 50% de opacidad */
   }
 
-  .logo h1 {
-    font-size: 1.5em;
+  .sidebar:not(.sidebar-collapsed) nav {
+    background-color: transparent; /* Asegura que el fondo del menú sea transparente */
+    box-shadow: none; /* Quita cualquier sombra que pueda estar causando problemas */
+  }
+  .sidebar-collapsed {
+    flex: 0 0 60px; /* Ancho de la barra lateral colapsada */
   }
 
-  .logo .open, .logo .blind,
-  .logo .open-collapsed, .logo .blind-collapsed {
-    font-size: 0.8em;
+  .logo {
+    display: none; /* Ocultar el logo cuando la barra lateral esté colapsada */
   }
 
-  nav ul li {
-    padding-left: 10px;
+  nav {
+    display: none; /* Ocultar el menú de navegación cuando la barra lateral esté colapsada */
   }
 
-  nav ul li a {
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .sidebar {
-    position: fixed;
-    left: -215px;
-    width: 215px;
-    height: 100%;
-    z-index: 1000;
-    transition: left 0.3s ease;
-  }
-
-  .sidebar.sidebar-collapsed {
-    left: 0;
+  .sidebar:not(.sidebar-collapsed) nav {
+    display: block; /* Mostrar el menú de navegación cuando la barra lateral no esté colapsada */
+    position: fixed; /* Posiciona el menú en relación con la barra lateral */
+    top: 0;
+    left: 130px; /* Coloca el menú a la derecha de la barra lateral colapsada */
+    width: calc(65%); /* Ajusta el ancho para ocupar el espacio restante */
+    background-color: #ffffff; /* Color de fondo para el menú expandido */
+    padding-top: 25px; /* Espacio en la parte superior del menú */
+    height: 100vh; /* Asegura que el menú ocupe toda la altura de la pantalla */
+    overflow-y: auto; /* Permite el desplazamiento del contenido verticalmente */
+    z-index: 100; /* Asegura que el menú esté sobre otros elementos */
   }
 
   .toggle-btn {
-    position: fixed;
-    left: 10px;
-    top: 10px;
-    z-index: 1001;
-  }
-
-  nav ul {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  nav ul li {
-    width: 100%;
-  }
-
-  nav ul li a {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .sidebar-collapsed nav ul li a span {
-    display: none;
-  }
-
-  .logo h1 {
-    font-size: 1.2em;
-  }
-
-  .logo .open, .logo .blind,
-  .logo .open-collapsed, .logo .blind-collapsed {
-    font-size: 1em;
+    position:fixed; /* Posiciona el botón dentro de la barra lateral */
+    top: 10px; /* Ajusta el margen superior */
+    left: 10px; /* Ajusta el margen izquierdo */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em; /* Tamaño de la flecha */
+    color: #333; /* Color de la flecha */
+    z-index: 101; /* Asegura que el botón esté sobre el contenido */
   }
 }
 </style>
-

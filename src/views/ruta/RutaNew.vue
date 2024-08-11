@@ -171,7 +171,7 @@ export default {
   .nav {
     position: fixed; /* Fijar en la parte superior */
     top: -9%; /* Alineado al principio de la página */
-    left: 65%; /* Centrando horizontalmente */
+    left: 63%; /* Centrando horizontalmente */
     transform: translateX(-50%); /* Ajusta el centro */
     width: 100%;
     max-width: 600px; /* Limitar el ancho máximo */
