@@ -30,11 +30,11 @@
             <td colspan="6" class="text-center">Sin registros de Rutas</td>
           </tr>
           <tr v-for="ruta in filteredRutas" :key="ruta.rutaId">
-            <td>{{ ruta.createRuta }}</td>
-            <td>{{ ruta.nombreRuta }}</td>
-            <td>{{ ruta.descripcionRuta }}</td>
-            <td>{{ ruta.ubicacionRuta }}</td>
-            <td>{{ ruta.estadoRuta }}</td>
+            <td  dat-label="Fecha">{{ ruta.createRuta }}</td>
+            <td  dat-label="Nombre de la Ruta">{{ ruta.nombreRuta }}</td>
+            <td  dat-label="Descripción">{{ ruta.descripcionRuta }}</td>
+            <td  dat-label="Ubicación">{{ ruta.ubicacionRuta }}</td>
+            <td  dat-label="Estado">{{ ruta.estadoRuta }}</td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', ruta)"></i>
               <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(ruta.rutaId)"></i> -->

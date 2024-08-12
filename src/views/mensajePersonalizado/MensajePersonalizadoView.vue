@@ -31,10 +31,10 @@
             </td>
           </tr>
           <tr v-for="mensaje in filteredMensajes" :key="mensaje.mensajeId">
-            <td>{{ mensaje.createMensaje }}</td>
-            <td>{{ mensaje.mensaje }}</td>
-            <td>{{ mensaje.contactoMensaje }}</td>
-            <td>{{ mensaje.estadoMensaje }}</td>
+            <td  dat-label="Fecha">{{ mensaje.createMensaje }}</td>
+            <td  dat-label="Mensaje">{{ mensaje.mensaje }}</td>
+            <td  dat-label="Contacto">{{ mensaje.contactoMensaje }}</td>
+            <td  dat-label="Estado">{{ mensaje.estadoMensaje }}</td>
             <td class="actions">
               <i
                 class="fas fa-edit"

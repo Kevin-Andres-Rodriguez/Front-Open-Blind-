@@ -287,6 +287,7 @@ input:checked + .slider:before {
   background-color: #0056b3;
 }
 
+
 /* Responsive table design */
 @media (max-width: 768px) {
   table,
@@ -316,11 +317,12 @@ input:checked + .slider:before {
   }
 
   td::before {
-    content: attr(data-label);
+    content: attr(dat-label);
     position: absolute;
-    left: 0;
+    top: -10px;
     width: 50%;
-    padding-left: 15px;
+    padding-left: 1px;
+    padding-top: -10px;
     font-weight: bold;
     text-align: left;
     white-space: nowrap;

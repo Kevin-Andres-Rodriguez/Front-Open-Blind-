@@ -4,7 +4,7 @@
       <img src="@/img/inicio.jpg" alt="Persona con bastón y acompañante" />
     </div>
     <div class="login-section">
-      <div class="logo">
+      <div class="logo mobile-only">
         <h1>Open<span class="blind">Blind</span></h1>
         <p>Navegando con Confianza, Alcanzando Libertad</p>
       </div>
@@ -42,8 +42,7 @@
   </div>
 </template>
 
-
-  <script>
+<script>
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -64,18 +63,14 @@ export default {
           "http://localhost:4200/usuario/login",
           this.form
         );
-        // Suponemos que el estado 200 indica éxito
         Swal.fire("Éxito", "Inicio de sesión exitoso", "success");
 
-        // Guardar el nombre del usuario y el token en localStorage
         const { usuario, token } = response.data;
         localStorage.setItem("user", JSON.stringify(usuario));
         localStorage.setItem("token", token);
 
-        // Redirigir a /dashboard
         this.$router.push("/dashboard");
       } catch (error) {
-        // Manejo de errores
         Swal.fire("Error", "Credenciales incorrectas", "error");
       }
     },
@@ -85,8 +80,6 @@ export default {
   },
 };
 </script>
-
-
 
 <style scoped>
 /* Estilos CSS del botón */
@@ -191,5 +184,49 @@ input {
 
 .register-link a:hover {
   text-decoration: underline;
+}
+
+/* Estilos responsive para móviles */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column; /* Cambia el diseño a columna en móviles */
+    height: auto; /* Ajusta la altura para pantallas pequeñas */
+  }
+
+  .image-section {
+    order: 1; /* La imagen aparece primero en móviles */
+    margin-bottom: 20px; /* Añade espacio debajo de la imagen */
+  }
+
+  .login-section {
+    order: 2; /* El formulario aparece debajo de la imagen en móviles */
+    margin-right: 0; /* Elimina el margen negativo en móviles */
+    padding: 20px; /* Reduce el padding en móviles */
+    width: 100%; /* Asegura que el formulario ocupe todo el ancho disponible */
+  }
+
+  .logo {
+    margin-right: 0; /* Elimina el margen negativo en móviles */
+  }
+
+  .logo h1 {
+    font-size: 2.5em;
+  }
+
+  .password-toggle {
+    top: 64%;
+    right: 30px; /* Ajusta la posición del botón de mostrar contraseña en móviles */
+  }
+
+  form {
+    max-width: 100%; /* Asegura que el formulario ocupe todo el ancho disponible */
+    margin-top: -50px;
+    margin-right: 0px; /* Elimina márgenes negativos en móviles */
+  }
+
+  .image-section img {
+    max-width: 106%; /* Asegura que la imagen se ajuste al ancho del contenedor en móviles */
+    height: auto; /* Mantiene la proporción de la imagen */
+  }
 }
 </style>

@@ -316,11 +316,12 @@ input:checked + .slider:before {
   }
 
   td::before {
-    content: attr(data-label);
+    content: attr(dat-label);
     position: absolute;
-    left: 0;
+    top: -10px;
     width: 50%;
-    padding-left: 15px;
+    padding-left: 1px;
+    padding-top: -10px;
     font-weight: bold;
     text-align: left;
     white-space: nowrap;
@@ -347,27 +348,45 @@ input:checked + .slider:before {
 }
 
 @media (max-width: 768px) {
-  .container {
-    width: calc(100% - 150px);
-    margin-left: 15px;
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tr {
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f1f1f1;
     padding: 10px;
-    
   }
 
-  .header h2 {
-    font-size: 20px;
-    
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 10px;
+    position: relative;
+    text-align: left;
   }
 
-  th, td {
-    padding: 8px;
-    
-    
+  td::before {
+    content: attr(dat-label);
+    font-weight: bold;
+    white-space: nowrap;
+    padding-right: 10px;
+    padding-top: -5px;
+    padding: auto;
   }
 
-  .form-group {
-    margin: 5px;
-    
+  td {
+    padding-left: 15px;
   }
 }
 

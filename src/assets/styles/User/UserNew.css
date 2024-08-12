@@ -1,89 +1,166 @@
-   
- .content {
-    margin-left: 20px;
-    padding: 15px;
-    width: calc(100% - 220px);
+.content {
+  margin-left: 20px;
+  padding: 15px;
+  width: calc(100% - 220px);
+  }
+  
+  
+  
+  .profile {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 1100px;
+    text-align: center;
+  }
+  
+  .profile h2 {
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+  
+  .profile-info {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-picture img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .profile-details p {
+    margin: 5px 0;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .additional-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .info-item {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+  }
+  
+  .info-item span {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .info-item:nth-child(1) span {
+    background-color: #ff9800;
+  }
+  
+  .info-item:nth-child(2) span {
+    background-color: #ff9800;
+  }
+  
+  .info-item:nth-child(3) span {
+    background-color: #4caf50;
+  }
+  
+  .info-item:nth-child(4) span {
+    background-color: #4caf50;
+  }
+  
+  .info-item:nth-child(5) span {
+    background-color: #f44336;
+  }
+  
+  .info-item:nth-child(6) span {
+    background-color: #e91e63;
+  }
+
+
+  @media (max-width: 600px) {
+    .content {
+        margin-left: 3px;
+        width: 100%;
     }
-    
-    
-    
+
     .profile {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 1100px;
-      text-align: center;
+        padding: 15px;
+        max-width: 100%;
     }
-    
+
     .profile h2 {
-      margin-bottom: 20px;
-      font-size: 22px;
+        font-size: 18px;
+        margin-bottom: 15px;
     }
-    
+
     .profile-info {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
+        flex-direction: column;
+        align-items: center;
     }
-    
-    .profile-picture img {
-      border-radius: 50%;
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      margin-right: 20px;
-    }
-    
+
     .profile-details p {
-      margin: 5px 0;
-      font-size: 16px;
-      line-height: 1.5;
+        font-size: 14px;
+        text-align: center;
     }
-    
+
     .additional-info {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
     }
-    
+
     .info-item {
-      background-color: #f8f8f8;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
+        padding: 15px;
     }
-    
+
     .info-item span {
-      display: block;
-      margin-bottom: 10px;
-      font-weight: bold;
-      color: #fff;
-      padding: 5px;
-      border-radius: 5px;
+        font-size: 14px;
     }
-    
-    .info-item:nth-child(1) span {
-      background-color: #ff9800;
-    }
-    
-    .info-item:nth-child(2) span {
-      background-color: #ff9800;
-    }
-    
-    .info-item:nth-child(3) span {
-      background-color: #4caf50;
-    }
-    
-    .info-item:nth-child(4) span {
-      background-color: #4caf50;
-    }
-    
-    .info-item:nth-child(5) span {
-      background-color: #f44336;
-    }
-    
-    .info-item:nth-child(6) span {
-      background-color: #e91e63;
-    }
+}
+
+.off-canvas {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  max-width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+
+.off-canvas.open {
+  right: 0;
+}
+
+.off-canvas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px;
+  background-color: #000000;
+  color: #fff;
+}
+
+.off-canvas-body {
+  padding: 10px;
+}
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5em;
+  cursor: pointer;
+}

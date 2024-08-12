@@ -32,11 +32,11 @@
             </td>
           </tr>
           <tr v-for="punto in filteredPuntos" :key="punto.puntointeresId">
-            <td>{{ punto.createPunto }}</td>
-            <td>{{ punto.nombrePunto }}</td>
-            <td>{{ punto.descripcionPunto }}</td>
-            <td>{{ punto.ubicacionPunto }}</td>
-            <td>{{ punto.estadoPunto }}</td>
+            <td dat-label="Fecha">{{ punto.createPunto }}</td>
+            <td dat-label="Nombre">{{ punto.nombrePunto }}</td>
+            <td dat-label="Descripción">{{ punto.descripcionPunto }}</td>
+            <td dat-label="Ubicación">{{ punto.ubicacionPunto }}</td>
+            <td dat-label="Estado">{{ punto.estadoPunto }}</td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', punto)"></i>
               <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(punto.puntointeresId)"></i> -->

@@ -80,8 +80,8 @@ export default {
 @media (max-width: 768px) {
   .nav {
     position: fixed; /* Fijar en la parte superior */
-    top: -9.3%; /* Alineado al principio de la página */
-    left: 50.3%; /* Centrando horizontalmente */
+    top: -11%; /* Alineado al principio de la página */
+    left: 60.3%; /* Centrando horizontalmente */
     transform: translateX(-50%); /* Ajusta el centro */
     width: 100%;
     max-width: 600px; /* Limitar el ancho máximo */
@@ -96,5 +96,4 @@ export default {
   }
 }
 </style>
-
 <style scoped src="@/assets/styles/User/UserNew.css"></style>

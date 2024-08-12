@@ -1,111 +1,171 @@
-.custom-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #fff;
-  background-color: #034494;
-  border: none;
-  border-radius: 5px;
-  text-align: center;
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f7f7f7;
-}
-  
-.container {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-}
-  
-.image-section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-}
-  
-.image-section img {
-    max-width: 130%;
-    max-height: 100%;
-}
-  
-  .login-section {
-    flex: 1;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-right: -20%;
-  }
-  
-  .logo {
-    text-align: center;
-    margin-left: 85px;
-  }
-  
-  .logo h1 {
-    font-size: 2.5em;
-    margin-right: 40px;
-  }
-  
-  .logo .blind {
-    color: #d6d6d6;
-  }
-  
-  form {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 330px;
-    margin-right: -15%;
-  }
-  
-  .name-group {
-    display: flex;
-    gap: 10px;
-  }
-  
-  input {
-    padding: 9px;
-    margin: 3px 0;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background-color: #fff;
-    width: 100%;
-  }
-  .required {
-  color: red;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
 }
 
-  .register-link {
-  text-align: center; 
-  margin-top: 10px; 
+.main-container {
+  display: flex;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  flex-direction: row;
 }
+
+.image-section {
+  flex: 1; /* Take up 50% of available width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Full height */
+}
+
+.image-section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image covers the container */
+}
+
+.login-container {
+  flex: 1; /* Take up 50% of available width */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Full height */
+  background-color: #f7f7f7;
+  box-shadow: -2px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-section {
+  width: 100%;
+  max-width: 400px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  text-align: center;
+}
+
+.logo h1 {
+  font-size: 2em;
+  color: #000000;
+  font-weight: bold;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+}
+
+.input {
+  position: relative;
+  margin: 5px 0;
+}
+
+.input input {
+  padding: 8px 35px 1px 10px; /* Deja espacio para el icono a la derecha */
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  width: 100%;
+  transition: border-color 0.3s;
+}
+
+.input input:focus {
+  border-color: #034494;
+  outline: none;
+}
+
+.input-icon {
+  position: absolute;
+  top: 40%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #034494;
+  pointer-events: none; /* Asegura que el icono no interfiera con la entrada */
+}
+
+
+.name-group {
+  display: flex;
+  gap: 10px;
+}
+
+.register-link {
+  margin-top: -3px;
+  text-align: center;
+}
+
+.register-link a {
+  color: red;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
 .password-toggle {
   position: absolute;
-  top: 59%;
-  right: 170px;
+  top: 63%;
+  right: 10px;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
+  color: #007bff;
 }
 
-.password-toggle i {
-  font-size: 1.2rem;
-  color: #333;
+.required {
+  color: red;
 }
 
-.password-toggle:focus {
-  outline: none;
+button {
+  margin-top: 5px;
+  padding: 10px;
+  background-color: #034494;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #003366;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    flex-direction: column;
+  }
+
+  .image-section,
+  .login-container{
+    width: 100%;
+    height: 50vh;
+  }
+
+  .login-section {
+    padding: 15px;
+    margin-top: 75%;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo h1 {
+    font-size: 1.5em;
+  }
+
+  button {
+    padding:8px;
+}
 }

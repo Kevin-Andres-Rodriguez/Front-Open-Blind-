@@ -28,11 +28,11 @@
             </td>
           </tr>
           <tr v-for="estacion in filteredEstaciones" :key="estacion.estacionId">
-            <td>{{ estacion.createEstacion }}</td>
-            <td>{{ estacion.nombreEstacion }}</td>
-            <td>{{ estacion.descripcionEstacion }}</td>
-            <td>{{ estacion.ubicacionEstacion }}</td>
-            <td>{{ estacion.estadoEstacion }}</td>
+            <td dat-label="Fecha">{{ estacion.createEstacion }}</td>
+            <td  dat-label="Nombre de la Estación">{{ estacion.nombreEstacion }}</td>
+            <td dat-label="Descripción">{{ estacion.descripcionEstacion }}</td>
+            <td dat-label="Ubicación">{{ estacion.ubicacionEstacion }}</td>
+            <td dat-label="Estado">{{ estacion.estadoEstacion }}</td>
             <td class="actions">
               <i
                 class="fas fa-edit"

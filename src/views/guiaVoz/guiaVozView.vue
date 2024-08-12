@@ -27,10 +27,10 @@
             </td>
           </tr>
           <tr v-for="item in filteredItems" :key="item.guiaVozId">
-            <td>{{ formatDate(item.createGuiaVoz) }}</td>
-            <td>{{ item.descripcionGuiaVoz }}</td>
-            <td>{{ item.audioUrlGuiaVoz }}</td>
-            <td>{{ item.estadoGuiaVoz }}</td>
+            <td dat-label="Fecha">{{ formatDate(item.createGuiaVoz) }}</td>
+            <td dat-label="Descripción">{{ item.descripcionGuiaVoz }}</td>
+            <td dat-label="URL de Audio">{{ item.audioUrlGuiaVoz }}</td>
+            <td dat-label="Estado">{{ item.estadoGuiaVoz }}</td>
             <td class="actions">
               <i class="fas fa-edit" @click="openOffCanvas('edit', item)"></i>
               <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(item.guiaVozId)"></i>  -->

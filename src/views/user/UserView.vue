@@ -28,18 +28,13 @@
             <td colspan="8" class="text-center">Sin registros de Usuarios</td>
           </tr>
           <tr v-for="user in filteredUsers" :key="user.usuarioId">
-            <td>{{ user.createUser }}</td>
-            <td>{{ user.nombreUsuario }}</td>
-            <td>{{ user.apellidoUsuario }}</td>
-            <td>{{ user.correoUsuario }}</td>
-            <td>{{ user.telefonoUsuario }}</td>
-            <td>{{ formatDate(user.fechaNacimientoUsuario) }}</td>
-            <td
-              :class="{
-                'status-active': user.estado_usuario,
-                'status-inactive': !user.estado_usuario,
-              }"
-            >
+            <td dat-label="Fecha">{{ user.createUser }}</td>
+            <td dat-label="Nombres">{{ user.nombreUsuario }}</td>
+            <td dat-label="Apellidos">{{ user.apellidoUsuario }}</td>
+            <td dat-label="Correo">{{ user.correoUsuario }}</td>
+            <td dat-label="Teléfono">{{ user.telefonoUsuario }}</td>
+            <td dat-label="F. Nacimiento">{{ formatDate(user.fechaNacimientoUsuario) }}</td>
+              <td dat-label="Estado"> 
               {{ user.estado_usuario ? "Activo" : "Desactivado" }}
             </td>
             <td class="actions">
@@ -240,7 +235,7 @@ export default {
         if (this.form.usuarioId) {
           // Actualizar un usuario existente
           await axios.put(
-            `http://localhost:4200/usuario/${this.form.usuarioId}`,
+          `http://localhost:4200/usuario/${this.form.usuarioId}`,
             this.form
           );
           const index = this.users.findIndex(
