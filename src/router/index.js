@@ -166,6 +166,7 @@ const routes = [
     path: "/view/User",
     name: "viewUser",
     component: UserView,
+    meta: { requiresAuth: true }
   },
   //Route DASHBOARD
   {
