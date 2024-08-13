@@ -29,7 +29,9 @@
           </tr>
           <tr v-for="estacion in filteredEstaciones" :key="estacion.estacionId">
             <td dat-label="Fecha">{{ estacion.createEstacion }}</td>
-            <td  dat-label="Nombre de la Estación">{{ estacion.nombreEstacion }}</td>
+            <td dat-label="Nombre de la Estación">
+              {{ estacion.nombreEstacion }}
+            </td>
             <td dat-label="Descripción">{{ estacion.descripcionEstacion }}</td>
             <td dat-label="Ubicación">{{ estacion.ubicacionEstacion }}</td>
             <td dat-label="Estado">{{ estacion.estadoEstacion }}</td>
@@ -38,7 +40,10 @@
                 class="fas fa-edit"
                 @click="openOffCanvas('edit', estacion)"
               ></i>
-              <!-- <i class="fas fa-trash-alt" @click="handleDeleteClick(estacion.estacionId)"></i> -->
+              <i
+                class="fas fa-trash-alt"
+                @click="handleDeleteClick(estacion.estacionId)"
+              ></i>
             </td>
           </tr>
         </tbody>
@@ -73,7 +78,9 @@
               @blur="validateNombreEstacion"
               required
             />
-            <div v-if="errors.nombreEstacion" class="error-message">{{ errors.nombreEstacion }}</div>
+            <div v-if="errors.nombreEstacion" class="error-message">
+              {{ errors.nombreEstacion }}
+            </div>
           </div>
           <div class="form-group">
             <label for="descripcion_estacion" class="form-label"
@@ -87,7 +94,9 @@
               @blur="validateDescripcionEstacion"
               required
             />
-            <div v-if="errors.descripcionEstacion" class="error-message">{{ errors.descripcionEstacion }}</div>
+            <div v-if="errors.descripcionEstacion" class="error-message">
+              {{ errors.descripcionEstacion }}
+            </div>
           </div>
           <div class="form-group">
             <label for="ubicacion_estacion" class="form-label"
@@ -101,7 +110,9 @@
               @blur="validateUbicacionEstacion"
               required
             />
-            <div v-if="errors.ubicacionEstacion" class="error-message">{{ errors.ubicacionEstacion }}</div>
+            <div v-if="errors.ubicacionEstacion" class="error-message">
+              {{ errors.ubicacionEstacion }}
+            </div>
           </div>
           <div class="form-group">
             <label for="estado_estacion" class="form-label"
@@ -115,7 +126,9 @@
               @blur="validateEstadoEstacion"
               required
             />
-            <div v-if="errors.estadoEstacion" class="error-message">{{ errors.estadoEstacion }}</div>
+            <div v-if="errors.estadoEstacion" class="error-message">
+              {{ errors.estadoEstacion }}
+            </div>
           </div>
           <div class="form-group-button">
             <button type="submit" class="btn">Guardar</button>
@@ -202,34 +215,37 @@ export default {
     },
     // Función eliminar
 
-    //async handleDeleteClick(estacionId) {
-    //Swal.fire({
-    //title: '¿Estás seguro?',
-    //text: "¡No podrás revertir esto!",
-    //icon: 'warning',
-    //showCancelButton: true,
-    // confirmButtonColor: '#3085d6',
-    //cancelButtonColor: '#d33',
-    //confirmButtonText: 'Sí, bórralo!'
-    //}).then(async (result) => {
-    //if (result.isConfirmed) {
-    //try {
-    //await axios.delete(`http://localhost:4200/estacion/${estacionId}`);
-    //this.estaciones = this.estaciones.filter(estacion => estacion.estacionId !== estacionId);
-    //Swal.fire('¡Borrado!', 'La estación ha sido borrada.', 'success');
-    //} catch (error) {
-    //Swal.fire('Error', 'Hubo un error al borrar la estación.', 'error');
-    //console.error('Error al borrar la estación:', error);
-    //}
-    //}
-    //});
-    //},
+    async handleDeleteClick(estacionId) {
+      Swal.fire({
+        title: "¿Estás seguro?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Sí, bórralo!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            await axios.delete(`http://localhost:4200/estacion/${estacionId}`);
+            this.estaciones = this.estaciones.filter(
+              (estacion) => estacion.estacionId !== estacionId
+            );
+            Swal.fire("¡Borrado!", "La estación ha sido borrada.", "success");
+          } catch (error) {
+            Swal.fire("Error", "Hubo un error al borrar la estación.", "error");
+            console.error("Error al borrar la estación:", error);
+          }
+        }
+      });
+    },
 
     validateNombreEstacion() {
       if (!this.form.nombreEstacion) {
         this.errors.nombreEstacion = "El nombre de la estación es obligatorio.";
       } else if (this.form.nombreEstacion.length < 5) {
-        this.errors.nombreEstacion = "El nombre debe tener al menos 5 caracteres.";
+        this.errors.nombreEstacion =
+          "El nombre debe tener al menos 5 caracteres.";
       } else {
         this.errors.nombreEstacion = null;
       }
@@ -238,7 +254,8 @@ export default {
       if (!this.form.descripcionEstacion) {
         this.errors.descripcionEstacion = "La descripción es obligatoria.";
       } else if (this.form.descripcionEstacion.length < 5) {
-        this.errors.descripcionEstacion = "La descripción debe tener al menos 5 caracteres.";
+        this.errors.descripcionEstacion =
+          "La descripción debe tener al menos 5 caracteres.";
       } else {
         this.errors.descripcionEstacion = null;
       }
@@ -247,7 +264,8 @@ export default {
       if (!this.form.ubicacionEstacion) {
         this.errors.ubicacionEstacion = "La ubicación es obligatoria.";
       } else if (this.form.ubicacionEstacion.length < 5) {
-        this.errors.ubicacionEstacion = "La ubicación debe tener al menos 5 caracteres.";
+        this.errors.ubicacionEstacion =
+          "La ubicación debe tener al menos 5 caracteres.";
       } else {
         this.errors.ubicacionEstacion = null;
       }
@@ -256,7 +274,8 @@ export default {
       if (!this.form.estadoEstacion) {
         this.errors.estadoEstacion = "El estado es obligatorio.";
       } else if (this.form.estadoEstacion.length < 5) {
-        this.errors.estadoEstacion = "El estado debe tener al menos 5 caracteres.";
+        this.errors.estadoEstacion =
+          "El estado debe tener al menos 5 caracteres.";
       } else {
         this.errors.estadoEstacion = null;
       }
@@ -267,7 +286,12 @@ export default {
       this.validateUbicacionEstacion();
       this.validateEstadoEstacion();
 
-      return !this.errors.nombreEstacion && !this.errors.descripcionEstacion && !this.errors.ubicacionEstacion && !this.errors.estadoEstacion;
+      return (
+        !this.errors.nombreEstacion &&
+        !this.errors.descripcionEstacion &&
+        !this.errors.ubicacionEstacion &&
+        !this.errors.estadoEstacion
+      );
     },
     async submitForm() {
       if (this.validateForm()) {
@@ -304,7 +328,11 @@ export default {
           console.error("Error al guardar la estación:", error);
         }
       } else {
-        Swal.fire("Error", "Por favor, corrija los errores en el formulario antes de enviarlo.", "error");
+        Swal.fire(
+          "Error",
+          "Por favor, corrija los errores en el formulario antes de enviarlo.",
+          "error"
+        );
       }
     },
     redirectToCreateEstacion() {
